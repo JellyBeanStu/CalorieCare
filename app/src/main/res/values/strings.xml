@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CalorieCare</string>
+    <string name="kakao_app_key">1d3331038279dae8885f6a52cb5cae81</string>
 </resources>

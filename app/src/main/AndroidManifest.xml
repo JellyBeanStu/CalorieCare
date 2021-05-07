@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.caloriecare">
-
+     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,6 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CalorieCare">
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="@string/kakao_app_key"/>
         <activity android:name=".ProfileActivity"/>
         <activity android:name=".StatisticActivity" />
         <activity android:name=".RankingActivity" />
@@ -20,6 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity"/>
+
 
     </application>
 

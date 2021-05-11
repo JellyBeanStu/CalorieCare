@@ -12,7 +12,6 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        setTitle("profile");
     }
     public void Click1(View v){
         Intent intent = new Intent(this,MainActivity.class);

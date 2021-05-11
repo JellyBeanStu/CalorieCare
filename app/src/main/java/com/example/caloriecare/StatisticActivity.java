@@ -6,14 +6,50 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.caloriecare.calendar.DayLog;
+import com.example.caloriecare.calendar.SaturdayDecorator;
+import com.example.caloriecare.calendar.SundayDecorator;
+import com.example.caloriecare.calendar.TextDecorator;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+
+
 public class StatisticActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistic);
-        setTitle("statistics");
+
+        MaterialCalendarView materialCalendarView = (MaterialCalendarView)findViewById(R.id.calendarView);
+
+        materialCalendarView.addDecorators(
+                new SundayDecorator(),
+                new SaturdayDecorator()
+        );
+
+        ArrayList<DayLog> temp = new ArrayList<DayLog>();
+
+        temp.add(new DayLog("2021-05-15",1000,0));
+        temp.add(new DayLog("2021-05-18",1000,10000));
+        temp.add(new DayLog("2021-05-20",0,0));
+
+
+        for(int i=0; i<temp.size(); i++){
+            ArrayList<Integer> t = temp.get(i).yymmdd();
+            CalendarDay day = CalendarDay.from(t.get(0) ,t.get(1)-1, t.get(2));
+
+            materialCalendarView.addDecorators(
+                    new TextDecorator(temp.get(i).getIntake(),true, Collections.singleton(day)),
+                    new TextDecorator(temp.get(i).getBurn(),false, Collections.singleton(day))
+            );
+        }
     }
+
     public void Click1(View v){
         Intent intent = new Intent(this,MainActivity.class);
         startActivity(intent);

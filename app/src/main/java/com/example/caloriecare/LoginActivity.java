@@ -12,7 +12,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        setTitle("login");
+
     }
     public void Click5(View v) {
         Intent intent = new Intent(this, MainActivity.class);

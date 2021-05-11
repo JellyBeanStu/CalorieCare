@@ -1,7 +1,9 @@
 package com.example.caloriecare;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +18,7 @@ import java.util.Collections;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 
 public class StatisticActivity extends AppCompatActivity {
@@ -48,6 +51,26 @@ public class StatisticActivity extends AppCompatActivity {
                     new TextDecorator(temp.get(i).getBurn(),false, Collections.singleton(day))
             );
         }
+
+        materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
+            @Override
+            public void onDateSelected(MaterialCalendarView widget, CalendarDay date, boolean selected) {
+
+                AlertDialog.Builder ad = new AlertDialog.Builder(StatisticActivity.this);
+                ad.setIcon(R.mipmap.ic_launcher);
+                ad.setTitle("제목");
+                ad.setMessage(date.toString());
+
+                ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                ad.show();
+                materialCalendarView.clearSelection();
+            }
+        });
     }
 
     public void Click1(View v){

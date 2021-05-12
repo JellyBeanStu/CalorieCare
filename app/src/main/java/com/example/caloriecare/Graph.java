@@ -24,6 +24,8 @@ public class Graph extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graph);
+        
+        lineChart = findViewById(R.id.chart);
 
         //데이터 입력, db에서 데이터 입력받는 값으로 y값 수정해야함
         List<Entry> entries = new ArrayList<>();

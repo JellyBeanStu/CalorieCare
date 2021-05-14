@@ -93,6 +93,7 @@ public class RankingFragment extends Fragment {
                     if (success) {
                         JSONArray jsonArray = jsonObject.getJSONArray("users");
                         HashMap<String, User> users = new HashMap<>();
+
                         for(int i=0;i<jsonArray.length();i++){
                             //log 는 jsonArray 형태로 가져와짐
                             JSONObject temp = jsonArray.getJSONObject(i);
@@ -131,6 +132,7 @@ public class RankingFragment extends Fragment {
                         //
                         //
                         //
+
                     } else {
                         Toast.makeText(getActivity(),jsonObject.toString(),Toast.LENGTH_LONG).show();
                         return;

@@ -1,7 +1,9 @@
 package com.example.caloriecare.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.caloriecare.DBrequest.getUserDataRequest;
+import com.example.caloriecare.LoginActivity;
 import com.example.caloriecare.MainActivity;
 import com.example.caloriecare.R;
 import com.kakao.usermgmt.UserManagement;
@@ -97,7 +100,9 @@ public class ProfileFragment extends Fragment {
                     public void onCompleteLogout()
                     {
                         // 로그아웃 성공시 수행하는 지점
-                        getActivity().finish(); // 현재 액티비티 종료
+                        ActivityCompat.finishAffinity(getActivity());
+                        System.runFinalization();
+                        System.exit(0);
                     }
                 });
             }

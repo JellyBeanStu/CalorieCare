@@ -16,6 +16,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#00FFEB3B"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -37,23 +38,78 @@
             android:id="@+id/tv_nickName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:layout_marginTop="10dp"
+            android:text="name"
+            android:textSize="24sp"
             tools:layout_editor_absoluteX="112dp"
             tools:layout_editor_absoluteY="298dp" />
 
         <TextView
             android:id="@+id/tv_email"
-            android:layout_width="wrap_content"
+            android:layout_width="174dp"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:layout_marginTop="10dp"
+            android:text="email"
+            android:textSize="20sp"
+            tools:layout_editor_absoluteX="112dp"
+            tools:layout_editor_absoluteY="229dp" />
+
+        <TextView
+            android:id="@+id/tv_birth"
+            style="@style/tv_birth"
+            android:layout_width="200dp"
+            android:layout_marginTop="10dp"
+            android:width="100dp"
+            android:text="birth"
+            android:textSize="20sp"
+            tools:layout_editor_absoluteX="112dp"
+            tools:layout_editor_absoluteY="229dp" />
+
+        <TextView
+            android:id="@+id/tv_height"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="height"
+            android:textSize="20sp"
+            tools:layout_editor_absoluteX="112dp"
+            tools:layout_editor_absoluteY="229dp" />
+
+        <TextView
+            android:id="@+id/tv_weight"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="weight"
+            android:textSize="20sp"
+            tools:layout_editor_absoluteX="112dp"
+            tools:layout_editor_absoluteY="229dp" />
+
+        <TextView
+            android:id="@+id/tv_bmr"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="bmr"
+            android:textSize="20sp"
             tools:layout_editor_absoluteX="112dp"
             tools:layout_editor_absoluteY="229dp" />
 
         <Button
             android:id="@+id/btn_logout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="#FFEB3B"
             android:text="logout" />
+
+        <Button
+            android:id="@+id/btn_logout2"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="#FFC107"
+            android:text="sign out" />
 
     </LinearLayout>
 

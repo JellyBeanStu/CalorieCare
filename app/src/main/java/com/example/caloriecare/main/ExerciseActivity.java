@@ -2,24 +2,34 @@ package com.example.caloriecare.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.caloriecare.MainActivity;
 import com.example.caloriecare.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ExerciseActivity extends AppCompatActivity {
-    ArrayAdapter<CharSequence> adspin1, adspin2;
-    String High = "";
-    String Low = "";
-    Integer result;
     String userID;
 
+    SetSpinner spinner;
+    ArrayAdapter<String> mainAdapter;
+    List<ArrayAdapter<String>> subAdapter;
+    Spinner mainCategory, subCategory;
+
+    Data selected;
+    double input = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,12 +38,62 @@ public class ExerciseActivity extends AppCompatActivity {
         Intent intent = getIntent();
         userID = intent.getStringExtra("userID");
 
-        final Spinner spin1 = (Spinner)findViewById(R.id.high_class);
-        final Spinner spin2 = (Spinner)findViewById(R.id.low_class);
-        //final EditText time=(EditText)findViewById(R.id.time);
-        //Button btn = (Button)findViewById(R.id.time_button);
-        //String time_num=time.getText().toString();
-        //int timeNUM=Integer.parseInt(time_num);
+        spinner = new SetSpinner(true);
+
+        mainAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getExerciseCategory());
+        subAdapter = new ArrayList<>();
+
+        subAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringExercise(0)));
+        subAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringExercise(1)));
+
+        mainAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mainCategory = (Spinner) findViewById(R.id.main_category_exercise);
+        subCategory = (Spinner) findViewById(R.id.sub_category_exercise);
+
+        mainCategory.setAdapter(mainAdapter);
+        subCategory.setAdapter(subAdapter.get(0));
+
+        mainCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                subCategory.setAdapter(subAdapter.get(position));
+                TextView calorie = (TextView)findViewById(R.id.calorie_burn);
+                calorie.setText("#### Kcal");
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        subCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selected = spinner.getExercise().get(position);
+                EditText time = (EditText)findViewById(R.id.time);
+
+                time.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+                    @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        input = Double.parseDouble(s.toString());
+                        double result = selected.getPerCalorie() * input;
+                        TextView calorie = (TextView)findViewById(R.id.calorie_burn);
+                        calorie.setText(Double.toString(result) + " Kcal");
+                    }
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    } });
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+
+
         Button btnBack =(Button)findViewById(R.id.exercise_back);
         Button btnEnter =(Button)findViewById(R.id.exercise_enter);
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -44,7 +104,6 @@ public class ExerciseActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
         btnEnter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,79 +112,6 @@ public class ExerciseActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        adspin1 = ArrayAdapter.createFromResource(this, R.array.high_exercise, android.R.layout.simple_spinner_dropdown_item);
-
-        adspin1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spin1.setAdapter(adspin1);
-
-        spin1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-                if (adspin1.getItem(i).equals("고운동1")) {
-
-                    High = "고운동1";//버튼 클릭시 출력을 위해 값을 넣었습니다.
-                    adspin2 = ArrayAdapter.createFromResource(ExerciseActivity.this, R.array.low1_exercise, android.R.layout.simple_spinner_dropdown_item);
-
-                    adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spin2.setAdapter(adspin2);
-
-                    spin2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        //저희는 두번째 선택된 값도 필요하니 이안에 두번째 spinner 선택 이벤트를 정의합니다.
-                        @Override
-                        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                            Low = adspin2.getItem(i).toString();
-
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> adapterView) {
-
-                        }
-                    });
-                } else if (adspin1.getItem(i).equals("고운동2")) {
-
-                    High = "고운동2";
-                    adspin2 = ArrayAdapter.createFromResource(ExerciseActivity.this, R.array.low2_exercise, android.R.layout.simple_spinner_dropdown_item);
-                    adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spin2.setAdapter(adspin2);
-                    spin2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                            Low = adspin2.getItem(i).toString();
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> adapterView) {
-                        }
-                    });
-                } else if (adspin1.getItem(i).equals("고운동3")) {
-
-                    High = "고운동3";
-                    adspin2 = ArrayAdapter.createFromResource(ExerciseActivity.this, R.array.low3_exercise, android.R.layout.simple_spinner_dropdown_item);
-                    adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spin2.setAdapter(adspin2);
-                    spin2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                            Low = adspin2.getItem(i).toString();
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> adapterView) {
-                        }
-                    });
-                }
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-
 
     }
 

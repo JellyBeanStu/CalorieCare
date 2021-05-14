@@ -28,13 +28,13 @@
             android:orientation="horizontal"
             android:layout_marginBottom="10dp">
             <Spinner
-                android:id="@+id/high_menu"
+                android:id="@+id/main_category_diet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 />
 
             <Spinner
-                android:id="@+id/low_menu"
+                android:id="@+id/sub_category_diet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 />
@@ -58,7 +58,7 @@
             android:layout_marginBottom="10dp">
 
             <EditText
-                android:id="@+id/intake"
+                android:id="@+id/grams"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="#### "
@@ -70,12 +70,6 @@
                 android:layout_height="wrap_content"
                 android:text="g"
                 android:textSize="30dp"/>
-            <Button
-                android:layout_width="60dp"
-                android:layout_height="30dp"
-                android:text="입력"
-                android:id="@+id/intake_button"
-                android:textSize="15dp"/>
         </LinearLayout>
 
         <TextView

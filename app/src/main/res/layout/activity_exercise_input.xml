@@ -29,13 +29,13 @@
         android:orientation="horizontal"
         android:layout_marginBottom="10dp">
         <Spinner
-            android:id="@+id/high_class"
+            android:id="@+id/main_category_exercise"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
              />
 
         <Spinner
-            android:id="@+id/low_class"
+            android:id="@+id/sub_category_exercise"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
            />
@@ -87,7 +87,7 @@
             android:textSize="30dp" />
 
         <TextView
-            android:id="@+id/calorie_consume"
+            android:id="@+id/calorie_burn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"

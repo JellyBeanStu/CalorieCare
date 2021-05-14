@@ -13,12 +13,11 @@ public final class AddTextToDate implements LineBackgroundSpan {
 
         if (this.type) {
             paint.setColor(Color.RED);
-            canvas.drawText(this.dayPrice, (float)((left + right) / 4), (float)(bottom + 25), paint);
+            canvas.drawText(this.dayPrice, (float)((left + right) / 4), (float)(bottom + 33), paint);
         } else {
             paint.setColor(Color.BLUE);
-            canvas.drawText(this.dayPrice, (float)((left + right) / 4), (float)(bottom + 55), paint);
+            canvas.drawText(this.dayPrice, (float)((left + right) / 4), (float)(bottom + 68), paint);
         }
-
         paint.setColor(Color.BLACK);
     }
 

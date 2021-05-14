@@ -1,5 +1,7 @@
 package com.example.caloriecare.calendar;
 
+import android.text.style.RelativeSizeSpan;
+
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;
@@ -13,9 +15,9 @@ public class TextDecorator implements DayViewDecorator {
     String text;
     boolean type;
 
-    public TextDecorator(float text, boolean type, Collection<CalendarDay> dates) {
+    public TextDecorator(double text, boolean type, Collection<CalendarDay> dates) {
 
-        this.text = Integer.toString(Math.round(text));
+        this.text = Integer.toString((int) Math.round(text));
         this.type = type;
         this.dates = new HashSet<>(dates);
 

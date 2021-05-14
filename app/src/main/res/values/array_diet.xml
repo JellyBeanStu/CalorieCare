@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="high_menu">
+        <item>한식</item>
+        <item>중식</item>
+        <item>양식</item>
+
+    </string-array>
+
+    <string-array name="low1_menu">
+        <item>한식 메뉴1</item>
+        <item>한식 메뉴2</item>
+        <item>한식 메뉴3</item>
+
+    </string-array>
+
+    <string-array name="low2_menu">
+        <item>중식 메뉴1</item>
+        <item>중식 메뉴2</item>
+        <item>중식 메뉴3</item>
+
+    </string-array>
+
+    <string-array name="low3_menu">
+        <item>양식 메뉴1</item>
+        <item>양식 메뉴2</item>
+        <item>양식 메뉴3</item>
+
+    </string-array>
+</resources>

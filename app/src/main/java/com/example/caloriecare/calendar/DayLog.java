@@ -5,19 +5,29 @@ import java.util.ArrayList;
 public class DayLog {
 
     private final String date;
-    private final float intake;
-    private final float burn;
+    private final double intake;
+    private final double burn;
+    private final double dayCalorie;
 
     public DayLog(){
         date = "2021-05-10";
         intake = 0;
         burn = 0;
+        dayCalorie = 0;
     }
-    public DayLog(String date, int intake, int burn){
+    public DayLog(String date, double intake, double burn){
         this.date = date;
         this.intake = intake;
         this.burn = burn;
+        this.dayCalorie = 0;
     }
+    public DayLog(String date, double intake, double burn, double dayCalorie){
+        this.date = date;
+        this.intake = intake;
+        this.burn = burn;
+        this.dayCalorie = dayCalorie;
+    }
+
     public ArrayList<Integer> yymmdd(){
         ArrayList<Integer> result = new ArrayList<Integer>();
 
@@ -31,11 +41,14 @@ public class DayLog {
     public String getDate(){
         return this.date;
     }
-    public float getIntake(){
+    public double getIntake(){
         return this.intake;
     }
-    public float getBurn(){
+    public double getBurn(){
         return this.burn;
+    }
+    public double getDayCalorie(){
+        return this.dayCalorie;
     }
 
 }

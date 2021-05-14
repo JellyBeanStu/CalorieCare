@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="high_exercise">
+        <item>고운동1</item>
+        <item>고운동2</item>
+        <item>고운동3</item>
+
+    </string-array>
+
+    <string-array name="low1_exercise">
+        <item>고1 저운동1</item>
+        <item>고1 저운동2</item>
+        <item>고1 저운동3</item>
+
+    </string-array>
+
+    <string-array name="low2_exercise">
+        <item>고2 저운동1</item>
+        <item>고2 저운동2</item>
+        <item>고2 저운동3</item>
+
+    </string-array>
+
+    <string-array name="low3_exercise">
+        <item>고3 저운동1</item>
+        <item>고3 저운동2</item>
+        <item>고3 저운동3</item>
+
+    </string-array>
+</resources>

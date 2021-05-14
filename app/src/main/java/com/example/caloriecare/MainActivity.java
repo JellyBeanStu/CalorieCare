@@ -1,41 +1,74 @@
 package com.example.caloriecare;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.view.MenuItem;
+
+import com.example.caloriecare.fragment.*;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private String userID;
+    private FragmentManager fragmentManager;
+
+    public String getUserID(){
+        return this.userID;
+    }
+    public FragmentManager getfragmentManager(){return this.fragmentManager;}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
-    public void Click1(View v){
-        Intent intent = new Intent(this,MainActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0,0);
-        finish();
-    }
-    public void Click2(View v){
-        Intent intent = new Intent(this,RankingActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0,0);
-        finish();
-    }
-    public void Click3(View v){
-        Intent intent = new Intent(this,StatisticActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0,0);
-        finish();
-    }
-    public void Click4(View v){
-        Intent intent = new Intent(this,ProfileActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0,0);
-        finish();
-    }
 
+        Intent intent = getIntent();
+        userID = intent.getStringExtra("userID");
+
+        boolean isExist = intent.getBooleanExtra("isExistingUser",true);
+
+        FragmentTransaction transaction;
+        fragmentManager = getSupportFragmentManager();
+
+        MainFragment mainFragment = new MainFragment();
+        RankingFragment rankingFragment = new RankingFragment();
+        CalendarFragment calendarFragment = new CalendarFragment();
+        ProfileFragment profileFragment = new ProfileFragment();
+        GraphFragment graphFragment = new GraphFragment();
+
+        transaction = fragmentManager.beginTransaction();
+        if(isExist)
+            transaction.replace(R.id.main_layout, mainFragment).commitAllowingStateLoss();
+        else
+            transaction.replace(R.id.main_layout, profileFragment).commitAllowingStateLoss();
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavi);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                switch(item.getItemId()){
+                    case R.id.item_home:
+                        transaction.replace(R.id.main_layout, mainFragment).commitAllowingStateLoss();
+                        break;
+                    case R.id.item_rank:
+                        transaction.replace(R.id.main_layout, rankingFragment).commitAllowingStateLoss();
+                        break;
+                    case R.id.item_statistic:
+                        transaction.replace(R.id.main_layout, calendarFragment).commitAllowingStateLoss();
+                        break;
+                    case R.id.item_profile:
+                        transaction.replace(R.id.main_layout, profileFragment).commitAllowingStateLoss();
+                        break;
+                }
+                return true;
+            }
+        });
+    }
 }

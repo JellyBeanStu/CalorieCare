@@ -112,7 +112,7 @@ public class GraphFragment extends Fragment {
         Button btnGraph = v.findViewById(R.id.button5);
         Button btnCalendar = v.findViewById(R.id.button6);
 
-        btnCalendar.setBackgroundColor(Color.LTGRAY);
+        btnCalendar.setBackgroundColor(Color.parseColor("#FFEB3B"));
         btnCalendar.setEnabled(true);
         btnGraph.setBackgroundColor(Color.WHITE);
         btnGraph.setEnabled(false);

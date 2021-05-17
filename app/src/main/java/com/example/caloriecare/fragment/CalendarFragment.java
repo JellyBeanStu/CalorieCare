@@ -111,7 +111,7 @@ public class CalendarFragment extends Fragment {
 
         btnCalendar.setBackgroundColor(Color.WHITE);
         btnCalendar.setEnabled(false);
-        btnGraph.setBackgroundColor(Color.LTGRAY);
+        btnGraph.setBackgroundColor(Color.parseColor("#FFEB3B"));
         btnGraph.setEnabled(true);
 
         btnGraph.setOnClickListener(new View.OnClickListener() {

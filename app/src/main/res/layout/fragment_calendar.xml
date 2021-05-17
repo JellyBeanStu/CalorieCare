@@ -30,6 +30,7 @@
             android:id="@+id/button5"
             android:layout_width="205dp"
             android:layout_height="match_parent"
+            android:background="#FFEB3B"
             android:text="그래프"
             android:textSize="18sp" />
 

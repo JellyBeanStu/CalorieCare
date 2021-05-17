@@ -129,7 +129,8 @@ public class ProfileFragment extends Fragment {
                         tv_nick.setText(userName); //닉네임
                         tv_email.setText(userEmail); // 이메일
 
-                        Glide.with(getActivity()).load(userProfileImg).into(tv_profile);//이미지
+                        if(userProfileImg != "null")
+                            Glide.with(getActivity()).load(userProfileImg).into(tv_profile);//이미지
 
                     } else {
                         Toast.makeText(getActivity(),jsonObject.toString(),Toast.LENGTH_LONG).show();

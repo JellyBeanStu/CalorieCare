@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.caloriecare.DBrequest.LoginRequest;
 import com.kakao.auth.ISessionCallback;
@@ -76,15 +77,22 @@ public class LoginActivity extends AppCompatActivity{
                                         return;
                                     }
                                 } catch (JSONException e) {
+                                    Toast.makeText(LoginActivity.this,e.toString(),Toast.LENGTH_SHORT).show();
                                     e.printStackTrace();
                                 }
                             }
                         };
 
-                        LoginRequest loginRequest = new LoginRequest(name, email, profileImg, responseListener);
+                        LoginRequest loginRequest = new LoginRequest(name, email, profileImg, responseListener,new Response.ErrorListener(){ //에러발생시 호출될 리스너 객체
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                System.out.println(error.getMessage());
+                                Toast.makeText(LoginActivity.this,"error",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this,error.getMessage(),Toast.LENGTH_LONG).show();
+                            }
+                        });
                         RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
                         queue.add(loginRequest);
-
                     }
                 });
             }

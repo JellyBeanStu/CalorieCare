@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import com.example.caloriecare.fragment.*;
 
+import com.google.android.material.bottomnavigation.BottomNavigationMenu;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,20 +36,24 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentTransaction transaction;
         fragmentManager = getSupportFragmentManager();
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavi);
 
         MainFragment mainFragment = new MainFragment();
         RankingFragment rankingFragment = new RankingFragment();
         CalendarFragment calendarFragment = new CalendarFragment();
         ProfileFragment profileFragment = new ProfileFragment();
-        GraphFragment graphFragment = new GraphFragment();
 
         transaction = fragmentManager.beginTransaction();
-        if(isExist)
+        if(isExist){
             transaction.replace(R.id.main_layout, mainFragment).commitAllowingStateLoss();
-        else
+            bottomNavigationView.setSelectedItemId(R.id.item_home);
+        }
+        else{
             transaction.replace(R.id.main_layout, profileFragment).commitAllowingStateLoss();
+            bottomNavigationView.setSelectedItemId(R.id.item_profile);
+        }
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavi);
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {

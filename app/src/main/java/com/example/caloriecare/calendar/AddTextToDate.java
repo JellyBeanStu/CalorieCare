@@ -9,16 +9,16 @@ import static java.lang.Boolean.*;
 
 public final class AddTextToDate implements LineBackgroundSpan {
     private String dayPrice;
-    private boolean type;
+    private String type;
 
     public void drawBackground(Canvas canvas, Paint paint, int left, int right, int top, int baseline, int bottom, CharSequence text, int start, int end, int lnum) {
 
-        if (this.type) {
-            paint.setColor(Color.parseColor("#1e3799"));
+        if (this.type == "EXERCISE") {
+            paint.setColor(Color.parseColor("#eb2f06"));
             paint.setFakeBoldText(TRUE);
             canvas.drawText(this.dayPrice, (float)((left + right) / 4), (float)(bottom + 33), paint);
-        } else {
-            paint.setColor(Color.parseColor("#eb2f06"));
+        } else if(this.type == "DIET"){
+            paint.setColor(Color.parseColor("#1e3799"));
             paint.setFakeBoldText(TRUE);
             canvas.drawText(this.dayPrice, (float)((left + right) / 4), (float)(bottom + 68), paint);
         }
@@ -26,7 +26,7 @@ public final class AddTextToDate implements LineBackgroundSpan {
         paint.setFakeBoldText(FALSE);
     }
 
-    public AddTextToDate(String text, boolean type) {
+    public AddTextToDate(String text, String type) {
         this.dayPrice = text;
         this.type = type;
     }

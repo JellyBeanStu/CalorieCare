@@ -98,12 +98,12 @@ public class RankingFragment extends Fragment {
                             //log 는 jsonArray 형태로 가져와짐
                             JSONObject temp = jsonArray.getJSONObject(i);
 
-                            String userID = temp.getString("userID");       // 해당 데이터의 날짜
-                            String userName = temp.getString("userName");       // 당일 섭취 칼로리
-                            String userEmail = temp.getString("userEmail");           // 당일 소모 칼로리
-                            String userBirth = temp.getString("userBirth");           // 당일 소모 칼로리
-                            boolean userGender = temp.getBoolean("userGender");           // 당일 소모 칼로리
-                            String userProfile = temp.getString("userProfile");           // 당일 소모 칼로리
+                            String userID = temp.getString("userID");
+                            String userName = temp.getString("userName");
+                            String userEmail = temp.getString("userEmail");
+                            String userBirth = temp.getString("userBirth");
+                            boolean userGender = temp.getBoolean("userGender");
+                            String userProfile = temp.getString("userProfile");
 
                             users.put(userID, new User(userID,userName,userEmail,userBirth,userGender,userProfile));
                         }

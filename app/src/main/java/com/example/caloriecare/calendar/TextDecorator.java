@@ -13,9 +13,9 @@ public class TextDecorator implements DayViewDecorator {
 
     private final HashSet<CalendarDay> dates;
     String text;
-    boolean type;
+    String type;
 
-    public TextDecorator(double text, boolean type, Collection<CalendarDay> dates) {
+    public TextDecorator(double text, String type, Collection<CalendarDay> dates) {
 
         this.text = Integer.toString((int) Math.round(text));
         this.type = type;

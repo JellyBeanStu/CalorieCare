@@ -2,6 +2,7 @@ package com.example.caloriecare.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
-import com.example.caloriecare.DBrequest.getDaylogRequest;
+import com.example.caloriecare.DBrequest.getLogsRequest;
 import com.example.caloriecare.R;
 
 import org.json.JSONArray;
@@ -29,7 +30,13 @@ public class TodayActivity extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(date);
     }
+    private void addText(String text){
+        TextView newText = new TextView(TodayActivity.this);
+        newText.setText(text);
+        newText.setTextSize(12);
 
+     //   listview.addView(newText);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +74,7 @@ public class TodayActivity extends AppCompatActivity {
                 }
             }
         };
-        getDaylogRequest daylogRequest = new getDaylogRequest(userID, getToday(), responseListener);
+        getLogsRequest daylogRequest = new getLogsRequest(userID, getToday(), responseListener);
         RequestQueue queue = Volley.newRequestQueue(TodayActivity.this);
         queue.add(daylogRequest);
     }

@@ -18,7 +18,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.example.caloriecare.DBrequest.MonthlogRequest;
-import com.example.caloriecare.DBrequest.getDaylogRequest;
+import com.example.caloriecare.DBrequest.getLogsRequest;
 import com.example.caloriecare.MainActivity;
 import com.example.caloriecare.R;
 import com.example.caloriecare.calendar.DayDecorator;
@@ -156,8 +156,8 @@ public class CalendarFragment extends Fragment {
                             ArrayList<Integer> t = daylogs.get(i).yymmdd();
                             CalendarDay day = CalendarDay.from(t.get(0) ,t.get(1)-1, t.get(2));
                             materialCalendarView.addDecorators(
-                                    new TextDecorator(daylogs.get(i).getIntake(),true, Collections.singleton(day)),
-                                    new TextDecorator(daylogs.get(i).getBurn(),false, Collections.singleton(day))
+                                    new TextDecorator(daylogs.get(i).getIntake(),"DIET", Collections.singleton(day)),
+                                    new TextDecorator(daylogs.get(i).getBurn(),"EXERCISE", Collections.singleton(day))
                             );
                         }
                     } else {
@@ -220,7 +220,7 @@ public class CalendarFragment extends Fragment {
                         }
                     }
                 };
-                getDaylogRequest daylogRequest = new getDaylogRequest(userID, getDay(date.getDate()), responseListener);
+                getLogsRequest daylogRequest = new getLogsRequest(userID, getDay(date.getDate()), responseListener);
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
                 queue.add(daylogRequest);
             }
@@ -254,8 +254,8 @@ public class CalendarFragment extends Fragment {
                                     ArrayList<Integer> t = daylogs.get(i).yymmdd();
                                     CalendarDay day = CalendarDay.from(t.get(0) ,t.get(1)-1, t.get(2));
                                     materialCalendarView.addDecorators(
-                                            new TextDecorator(daylogs.get(i).getIntake(),true, Collections.singleton(day)),
-                                            new TextDecorator(daylogs.get(i).getBurn(),false, Collections.singleton(day))
+                                            new TextDecorator(daylogs.get(i).getIntake(),"DIET", Collections.singleton(day)),
+                                            new TextDecorator(daylogs.get(i).getBurn(),"EXERCISE", Collections.singleton(day))
                                     );
                                 }
                             } else {

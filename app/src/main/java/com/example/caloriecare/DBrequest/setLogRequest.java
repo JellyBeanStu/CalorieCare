@@ -12,12 +12,12 @@ public class setLogRequest extends StringRequest {
     final static private String URL = "http://118.67.135.180/CalorieCare/setLog.php";
     private Map<String, String> map;
 
-    public setLogRequest(String userID, boolean type, String code, double volume, double calorie, Response.Listener<String> listener) {
+    public setLogRequest(String userID, String type, String code, double volume, double calorie, Response.Listener<String> listener) {
         super(Method.POST, URL, listener, null);
 
         map = new HashMap<>();
         map.put("userID",userID);
-        map.put("type", Boolean.toString(type));
+        map.put("type", type);
         map.put("code", code);
         map.put("volume", Double.toString(volume));
         map.put("calorie", Double.toString(calorie));

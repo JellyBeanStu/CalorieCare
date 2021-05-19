@@ -7,12 +7,12 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-public class getDaylogRequest extends StringRequest {
+public class getLogsRequest extends StringRequest {
 
-    final static private String URL = "http://118.67.135.180/CalorieCare/getTheDaylogs.php";
+    final static private String URL = "http://118.67.135.180/CalorieCare/getTheDayLogs.php";
     private Map<String, String> map;
 
-    public getDaylogRequest(String userID, String date, Response.Listener<String> listener) {
+    public getLogsRequest(String userID, String date, Response.Listener<String> listener) {
         super(Method.POST, URL, listener, null);
 
         map = new HashMap<>();

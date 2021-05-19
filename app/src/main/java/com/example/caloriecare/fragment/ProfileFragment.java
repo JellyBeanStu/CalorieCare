@@ -99,12 +99,12 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onCompleteLogout()
                     {
-                        // 로그아웃 성공시 수행하는 지점
-                        ActivityCompat.finishAffinity(getActivity());
-                        System.runFinalization();
-                        System.exit(0);
+                        Intent intent = new Intent(getActivity(), LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
                     }
                 });
+
             }
         });
 

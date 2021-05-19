@@ -70,12 +70,6 @@
                 android:layout_height="wrap_content"
                 android:text="분"
                 android:textSize="30dp"/>
-            <Button
-                android:layout_width="60dp"
-                android:layout_height="30dp"
-                android:text="입력"
-                android:id="@+id/time_button"
-                android:textSize="10dp"/>
 
         </LinearLayout>
 

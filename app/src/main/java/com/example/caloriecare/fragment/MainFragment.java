@@ -1,6 +1,7 @@
 package com.example.caloriecare.fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -131,7 +132,10 @@ public class MainFragment extends Fragment {
                          String intake = jsonObject.getString("intake");
                          String burn = jsonObject.getString("burn");
                          String dayCalorie= jsonObject.getString("dayCalorie");
-
+                         double value = Double.parseDouble(dayCalorie);
+                         if(value > 0) calorieText.setTextColor(Color.parseColor("#0c2461"));
+                         else if(value < 0) calorieText.setTextColor(Color.parseColor("#b71540"));
+                         else calorieText.setTextColor(Color.parseColor("#2f3640"));
                          exerciseText.setText(burn + " Kcal");
                          dietText.setText(intake + " Kcal");
                          calorieText.setText(dayCalorie + " Kcal");

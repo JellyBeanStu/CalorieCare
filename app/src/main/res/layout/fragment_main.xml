@@ -14,10 +14,9 @@
             android:id="@+id/exerciseLayout"
             android:layout_width="315dp"
             android:layout_height="150dp"
-            android:layout_marginStart="40dp"
-            android:layout_marginLeft="40dp"
             android:layout_marginTop="90dp"
             android:background="@drawable/round_shadow"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -41,7 +40,7 @@
                 android:layout_marginTop="42dp"
                 android:fontFamily="@font/bmdohyeon"
                 android:text="오늘의 운동"
-                android:textColor="#000000"
+                android:textColor="#2f3640"
                 android:textSize="22sp"
                 app:layout_constraintStart_toEndOf="@+id/imageView3"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -56,7 +55,8 @@
                 android:fontFamily="@font/bmdohyeon"
                 android:letterSpacing="0.08"
                 android:text="        Kcal"
-                android:textSize="28dp"
+                android:textColor="#b71540"
+                android:textSize="26sp"
                 app:layout_constraintStart_toEndOf="@+id/imageView3"
                 app:layout_constraintTop_toBottomOf="@+id/exercise" />
 
@@ -66,10 +66,9 @@
             android:id="@+id/dietLayout"
             android:layout_width="315dp"
             android:layout_height="150dp"
-            android:layout_marginStart="40dp"
-            android:layout_marginLeft="40dp"
             android:layout_marginTop="30dp"
             android:background="@drawable/round_shadow"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/exerciseLayout">
 
@@ -93,7 +92,7 @@
                 android:layout_marginTop="42dp"
                 android:fontFamily="@font/bmdohyeon"
                 android:text="오늘의 식단"
-                android:textColor="#000000"
+                android:textColor="#2f3640"
                 android:textSize="22sp"
                 app:layout_constraintStart_toEndOf="@+id/imageView4"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -108,7 +107,8 @@
                 android:fontFamily="@font/bmdohyeon"
                 android:letterSpacing="0.08"
                 android:text="        Kcal"
-                android:textSize="27dp"
+                android:textColor="#0c2461"
+                android:textSize="26dp"
                 app:layout_constraintStart_toEndOf="@+id/imageView4"
                 app:layout_constraintTop_toBottomOf="@+id/diet" />
 
@@ -118,10 +118,9 @@
             android:id="@+id/todayLayout"
             android:layout_width="315dp"
             android:layout_height="150dp"
-            android:layout_marginStart="40dp"
-            android:layout_marginLeft="40dp"
             android:layout_marginTop="30dp"
             android:background="@drawable/round_shadow"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dietLayout">
 
@@ -145,7 +144,7 @@
                 android:layout_marginTop="42dp"
                 android:fontFamily="@font/bmdohyeon"
                 android:text="오늘의 칼로리"
-                android:textColor="#000000"
+                android:textColor="#2f3640"
                 android:textSize="22sp"
                 app:layout_constraintStart_toEndOf="@+id/imageView5"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -160,7 +159,7 @@
                 android:fontFamily="@font/bmdohyeon"
                 android:letterSpacing="0.08"
                 android:text="        Kcal"
-                android:textSize="28dp"
+                android:textSize="26sp"
                 app:layout_constraintStart_toEndOf="@+id/imageView5"
                 app:layout_constraintTop_toBottomOf="@+id/calorie" />
 

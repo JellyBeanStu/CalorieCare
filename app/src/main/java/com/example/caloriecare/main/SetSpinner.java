@@ -55,6 +55,13 @@ public class SetSpinner {
         diet.add(new Data("짜장면","FO0007",500,3));
         diet.add(new Data("짬뽕","FO0008",400,3));
         diet.add(new Data("탕수육","FO0009",500,3));
+        //과일
+        dietCategory.add("과일");
+        diet.add(new Data("탕수육","FO0010",500,4));
+        //채소
+        dietCategory.add("채소");
+        diet.add(new Data("탕수육","FO0009",500,5));
+
     }
     public List<Data> getExercise(){
         return this.exercise;

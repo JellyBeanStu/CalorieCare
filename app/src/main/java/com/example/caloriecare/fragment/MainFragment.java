@@ -10,20 +10,18 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 import com.example.caloriecare.DBrequest.getTodaylogRequest;
-import com.example.caloriecare.DBrequest.getUserDataRequest;
 import com.example.caloriecare.MainActivity;
 import com.example.caloriecare.R;
-import com.example.caloriecare.main.*;
+import com.example.caloriecare.main.DietActivity;
+import com.example.caloriecare.main.ExerciseActivity;
+import com.example.caloriecare.main.ReceiptActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,8 +44,8 @@ public class MainFragment extends Fragment {
     private String mParam2;
     private String userID;
 
-    ConstraintLayout exercise, diet, calorie;
-    TextView exerciseText, dietText, calorieText;
+    ConstraintLayout exercise, diet, receipt;
+    TextView exerciseText, dietText, receiptText;
 
     public MainFragment() {
         // Required empty public constructor
@@ -91,11 +89,11 @@ public class MainFragment extends Fragment {
 
         exercise = v.findViewById(R.id.exerciseLayout);
         diet = v.findViewById(R.id.dietLayout);
-        calorie = v.findViewById(R.id.todayLayout);
+        receipt = v.findViewById(R.id.todayLayout);
 
         exerciseText = v.findViewById(R.id.exercise_kcal);
         dietText = v.findViewById(R.id.diet_kcal);
-        calorieText = v.findViewById(R.id.day_kcal);
+        receiptText = v.findViewById(R.id.day_kcal);
 
         exercise.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,10 +111,10 @@ public class MainFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        calorie.setOnClickListener(new View.OnClickListener() {
+        receipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), TodayActivity.class);
+                Intent intent = new Intent(getActivity(), ReceiptActivity.class);
                 intent.putExtra("userID", userID);
                 startActivity(intent);
             }
@@ -133,12 +131,12 @@ public class MainFragment extends Fragment {
                          String burn = jsonObject.getString("burn");
                          String dayCalorie= jsonObject.getString("dayCalorie");
                          double value = Double.parseDouble(dayCalorie);
-                         if(value > 0) calorieText.setTextColor(Color.parseColor("#0c2461"));
-                         else if(value < 0) calorieText.setTextColor(Color.parseColor("#b71540"));
-                         else calorieText.setTextColor(Color.parseColor("#2f3640"));
+                         if(value > 0) receiptText.setTextColor(Color.parseColor("#0c2461"));
+                         else if(value < 0) receiptText.setTextColor(Color.parseColor("#b71540"));
+                         else receiptText.setTextColor(Color.parseColor("#2f3640"));
                          exerciseText.setText(burn + " Kcal");
                          dietText.setText(intake + " Kcal");
-                         calorieText.setText(dayCalorie + " Kcal");
+                         receiptText.setText(dayCalorie + " Kcal");
 
                     } else {
                         Toast.makeText(getActivity(),jsonObject.toString(),Toast.LENGTH_LONG).show();

@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
             bottomNavigationView.setSelectedItemId(R.id.item_profile);
         }
 
-
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {

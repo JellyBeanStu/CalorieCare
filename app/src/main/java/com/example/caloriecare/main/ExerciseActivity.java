@@ -47,7 +47,7 @@ public class ExerciseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise_input);
-
+        setTitle("");
         Intent intent = getIntent();
         userID = intent.getStringExtra("userID");
 
@@ -110,9 +110,7 @@ public class ExerciseActivity extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ExerciseActivity.this, MainActivity.class);
-                intent.putExtra("userID",userID);
-                startActivity(intent);
+                finish();
             }
         });
         btnEnter.setOnClickListener(new View.OnClickListener() {
@@ -127,9 +125,7 @@ public class ExerciseActivity extends AppCompatActivity {
                             if (success) {
                                 Toast.makeText(ExerciseActivity.this, "저장 완료!", Toast.LENGTH_SHORT).show();
 
-                                Intent intent = new Intent(ExerciseActivity.this, MainActivity.class);
-                                intent.putExtra("userID",userID);
-                                startActivity(intent);
+                                finish();
 
                             } else {
                                 Toast.makeText(getApplicationContext(),jsonObject.getString("error"),Toast.LENGTH_LONG).show();

@@ -27,9 +27,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity"/>
-        <activity android:name=".main.ExerciseActivity"  />
-        <activity android:name=".main.DietActivity" />
-        <activity android:name=".main.TodayActivity"  />
+        <activity android:name=".main.ExerciseActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.Dialog"/>
+        <activity android:name=".main.DietActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.Dialog"/>
+        <activity android:name=".main.TodayActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.Dialog"/>
 
 
     </application>

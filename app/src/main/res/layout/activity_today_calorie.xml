@@ -5,7 +5,7 @@
     android:layout_width="350dp"
     android:layout_height="500dp"
     android:layout_gravity="center"
-    tools:context=".main.TodayActivity">
+    tools:context=".main.ReceiptActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

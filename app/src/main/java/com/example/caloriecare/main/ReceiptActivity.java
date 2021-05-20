@@ -20,7 +20,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class TodayActivity extends AppCompatActivity {
+public class ReceiptActivity extends AppCompatActivity {
 
     private String userID;
 
@@ -31,7 +31,7 @@ public class TodayActivity extends AppCompatActivity {
         return sdf.format(date);
     }
     private void addText(String text){
-        TextView newText = new TextView(TodayActivity.this);
+        TextView newText = new TextView(ReceiptActivity.this);
         newText.setText(text);
         newText.setTextSize(12);
 
@@ -41,7 +41,7 @@ public class TodayActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_today_calorie);
-
+        setTitle("");
         Intent intent = getIntent();
         userID = intent.getStringExtra("userID");
 
@@ -65,17 +65,17 @@ public class TodayActivity extends AppCompatActivity {
 //                                }
 
                     } else {
-                        Toast.makeText(TodayActivity.this,jsonObject.toString(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(ReceiptActivity.this,jsonObject.toString(),Toast.LENGTH_LONG).show();
                         return;
                     }
                 } catch (JSONException e) {
-                    Toast.makeText(TodayActivity.this,e.toString(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(ReceiptActivity.this,e.toString(),Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
             }
         };
         getLogsRequest daylogRequest = new getLogsRequest(userID, getToday(), responseListener);
-        RequestQueue queue = Volley.newRequestQueue(TodayActivity.this);
+        RequestQueue queue = Volley.newRequestQueue(ReceiptActivity.this);
         queue.add(daylogRequest);
     }
 }

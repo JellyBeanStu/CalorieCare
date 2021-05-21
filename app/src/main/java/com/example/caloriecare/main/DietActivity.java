@@ -19,7 +19,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.example.caloriecare.DBrequest.setLogRequest;
-import com.example.caloriecare.MainActivity;
 import com.example.caloriecare.R;
 
 import org.json.JSONException;
@@ -32,9 +31,10 @@ public class DietActivity extends AppCompatActivity {
     String userID;
 
     SetSpinner spinner;
-    ArrayAdapter<String> mainAdapter;
-    List<ArrayAdapter<String>> subAdapter;
-    Spinner mainCategory, subCategory;
+    ArrayAdapter<String> largeAdapter;
+    List<ArrayAdapter<String>> mediumAdapter;
+    List<ArrayAdapter<String>> smallAdapter;
+    Spinner largeCategory, mediumCategory, smallCategory;
 
     Data selected;
     double input = 0;
@@ -44,32 +44,32 @@ public class DietActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diet_input);
-        setTitle("");
         Intent intent = getIntent();
         userID = intent.getStringExtra("userID");
 
         spinner = new SetSpinner(false);
 
-        mainAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getDietCategory());
-        subAdapter = new ArrayList<>();
+        largeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getDietCategory());
+        smallAdapter = new ArrayList<>();
 
-        subAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringDiet(0)));
-        subAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringDiet(1)));
-        subAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringDiet(2)));
-        subAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringDiet(3)));
+        smallAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringDiet(0)));
+        smallAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringDiet(1)));
+        smallAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringDiet(2)));
+        smallAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringDiet(3)));
 
-        mainAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mainCategory = (Spinner) findViewById(R.id.main_category_diet);
-        subCategory = (Spinner) findViewById(R.id.sub_category_diet);
+        largeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        largeCategory = (Spinner) findViewById(R.id.large_category_diet);
+        smallCategory = (Spinner) findViewById(R.id.small_category_diet);
 
-        mainCategory.setAdapter(mainAdapter);
-        subCategory.setAdapter(subAdapter.get(0));
+        largeCategory.setAdapter(largeAdapter);
+        smallCategory.setAdapter(smallAdapter.get(0));
 
-        mainCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        largeCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                subCategory.setAdapter(subAdapter.get(position));
+                smallCategory.setAdapter(smallAdapter.get(position));
                 TextView calorie = (TextView)findViewById(R.id.calorie_intake);
+
                 calorie.setText("#### Kcal");
             }
             @Override
@@ -77,7 +77,7 @@ public class DietActivity extends AppCompatActivity {
             }
         });
 
-        subCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        smallCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selected = spinner.getDiet().get(position);

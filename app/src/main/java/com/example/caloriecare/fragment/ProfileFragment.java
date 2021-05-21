@@ -14,11 +14,13 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -65,10 +67,11 @@ public class ProfileFragment extends Fragment {
     private boolean userGender;
     private int age;
     private double weight, height, BMR;
+
     ImageView img_profile;
     TextView text_name, text_email, text_birth, text_bmr;
     EditText text_height, text_weight;
-
+    ToggleButton tbtn_gender;
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -115,6 +118,7 @@ public class ProfileFragment extends Fragment {
         text_height = v.findViewById(R.id.profile_text_height);
         text_weight = v.findViewById(R.id.profile_text_weight);
         text_bmr = v.findViewById(R.id.profile_text_bmr);
+        tbtn_gender = v.findViewById(R.id.profile_btn_gender);
 
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
@@ -134,12 +138,15 @@ public class ProfileFragment extends Fragment {
                         weight = jsonObject.getDouble("weight");
                         BMR = jsonObject.getDouble("BMR");
 
+                        setAge();
+
                         if(userProfileImg != "null")
                             Glide.with(getActivity()).load(userProfileImg).into(img_profile);//이미지
 
                         text_name.setText(userName); // 이름
                         text_email.setText(userEmail); // 이메일
                         text_birth.setText(userBirth);
+                        tbtn_gender.setChecked(userGender);
 
                         text_height.setText(Double.toString(height));
                         text_weight.setText(Double.toString(weight));
@@ -205,6 +212,9 @@ public class ProfileFragment extends Fragment {
         v.findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                userName = text_name.getText().toString();
+                userGender = tbtn_gender.isChecked();
+
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -224,7 +234,7 @@ public class ProfileFragment extends Fragment {
                         }
                     }
                 };
-                updateProfileRequest updateprofileRequest = new updateProfileRequest(userID, userName,userBirth,userGender,height,weight,BMR, responseListener);
+                updateProfileRequest updateprofileRequest = new updateProfileRequest(userID,userName,userBirth,userGender,height,weight,BMR, responseListener);
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
                 queue.add(updateprofileRequest);
             }
@@ -320,7 +330,6 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-
         return v;
     }
     @Override
@@ -331,6 +340,7 @@ public class ProfileFragment extends Fragment {
             userBirth = date;
             text_birth.setText(date);
             setAge();
+            calculateBMR();
         }
     }
     public void setAge(){

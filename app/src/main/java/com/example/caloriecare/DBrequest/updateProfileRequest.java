@@ -20,7 +20,7 @@ public class updateProfileRequest extends StringRequest {
         map.put("userID",userID);
         map.put("userName",userName);
         map.put("userBirth",userBirth);
-        map.put("userGender",Boolean.toString(userGender));
+        map.put("userGender",Integer.toString(userGender? 1 : 0));
         map.put("height",Double.toString(height));
         map.put("weight",Double.toString(weight));
         map.put("BMR",Double.toString(BMR));

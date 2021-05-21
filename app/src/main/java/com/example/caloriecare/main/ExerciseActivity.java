@@ -120,7 +120,9 @@ public class ExerciseActivity extends AppCompatActivity {
                             boolean success = jsonObject.getBoolean("success");
                             if (success) {
                                 Toast.makeText(ExerciseActivity.this, "저장 완료!", Toast.LENGTH_SHORT).show();
-
+                                Intent intent = new Intent();
+                                intent.putExtra("calorie", result);
+                                setResult(RESULT_OK,intent);
                                 finish();
 
                             } else {

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
@@ -22,9 +23,12 @@ import com.example.caloriecare.R;
 import com.example.caloriecare.main.DietActivity;
 import com.example.caloriecare.main.ExerciseActivity;
 import com.example.caloriecare.main.ReceiptActivity;
+import com.example.caloriecare.profile.DatePickerActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,8 +48,32 @@ public class MainFragment extends Fragment {
     private String mParam2;
 
     private String userID;
+    double exerciseCalorie=0, dietCalorie=0, receiptCalorie=0;
+
     ConstraintLayout exercise, diet, receipt;
     TextView exerciseText, dietText, receiptText, BMRText;
+
+    public void setExerciseCalorie(double addCalorie){
+        exerciseCalorie += addCalorie;
+        exerciseText.setText(String.format("%.1f",exerciseCalorie)+ " Kcal");
+    }
+    public void setDietCalorie(double addCalorie){
+        dietCalorie += addCalorie;
+        dietText.setText(String.format("%.1f",dietCalorie)+ " Kcal");
+    }
+    public void setReceiptCalorie(double addCalorie){
+        receiptCalorie += addCalorie;
+        String temp = "";
+        if(receiptCalorie > 0){
+            receiptText.setTextColor(Color.parseColor("#0c2461"));
+            temp = " ";
+        }
+        else if(receiptCalorie < 0) receiptText.setTextColor(Color.parseColor("#b71540"));
+        else receiptText.setTextColor(Color.parseColor("#2f3640"));
+
+        receiptText.setText(temp+String.format("%.1f",receiptCalorie)+ " Kcal");
+
+    }
 
     public MainFragment() {
         // Required empty public constructor
@@ -101,7 +129,7 @@ public class MainFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), ExerciseActivity.class);
                 intent.putExtra("userID", userID);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         });
         diet.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +137,7 @@ public class MainFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), DietActivity.class);
                 intent.putExtra("userID", userID);
-                startActivity(intent);
+                startActivityForResult(intent, 2);
             }
         });
         receipt.setOnClickListener(new View.OnClickListener() {
@@ -128,20 +156,13 @@ public class MainFragment extends Fragment {
                     JSONObject jsonObject = new JSONObject(response);
                     boolean success = jsonObject.getBoolean("success");
                     if (success) {
-                         String intake = String.format("%.1f", jsonObject.getDouble("intake"));
-                         String burn = String.format("%.1f", jsonObject.getDouble("burn"));
-                         String dayCalorie= String.format("%.1f", jsonObject.getDouble("dayCalorie"));
-                         String BMR= String.format("%.1f", jsonObject.getDouble("BMR"));
+                        exerciseCalorie=dietCalorie=receiptCalorie=0;
+                        setExerciseCalorie(jsonObject.getDouble("burn"));
+                        setDietCalorie(jsonObject.getDouble("intake"));
+                        setReceiptCalorie(jsonObject.getDouble("dayCalorie"));
 
-                         double value = Double.parseDouble(dayCalorie);
-                         if(value > 0) receiptText.setTextColor(Color.parseColor("#0c2461"));
-                         else if(value < 0) receiptText.setTextColor(Color.parseColor("#b71540"));
-                         else receiptText.setTextColor(Color.parseColor("#2f3640"));
-
-                         exerciseText.setText(burn + " Kcal");
-                         dietText.setText(intake + " Kcal");
-                         receiptText.setText(dayCalorie + " Kcal");
-                         BMRText.setText(BMR + " Kcal");
+                        String BMR= String.format("%.1f", jsonObject.getDouble("BMR"));
+                        BMRText.setText(BMR + " Kcal");
                     } else {
                         Toast.makeText(getActivity(),jsonObject.toString(),Toast.LENGTH_LONG).show();
                         return;
@@ -158,5 +179,22 @@ public class MainFragment extends Fragment {
 
 
         return v;
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        double calorie = data.getDoubleExtra("calorie",0);
+        if(resultCode == RESULT_OK){
+            switch(requestCode){
+                case 1:
+                    setExerciseCalorie(calorie);
+                    setReceiptCalorie(calorie * -1);
+                    break;
+                case 2:
+                    setDietCalorie(calorie);
+                    setReceiptCalorie(calorie);
+                    break;
+            }
+        }
     }
 }

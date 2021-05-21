@@ -148,8 +148,10 @@ public class ProfileFragment extends Fragment {
                         text_birth.setText(userBirth);
                         tbtn_gender.setChecked(userGender);
 
-                        text_height.setText(Double.toString(height));
-                        text_weight.setText(Double.toString(weight));
+                        if(height !=0)
+                            text_height.setText(Double.toString(height));
+                        if(weight !=0)
+                            text_weight.setText(Double.toString(weight));
                         text_bmr.setText(String.format("%.2f",BMR) + " Kcal");
 
                     } else {

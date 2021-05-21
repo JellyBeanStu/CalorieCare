@@ -10,6 +10,7 @@ public class User {
     private String ID, name, email, birth, profile;
     private boolean gender;
     private List<DayLog> daylogs;
+    private List<Double> calorie;
 
     public User(){
 

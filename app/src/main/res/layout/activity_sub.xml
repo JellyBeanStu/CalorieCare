@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:gravity="center"
     tools:context=".SubActivity"
     android:orientation="vertical">
 
@@ -13,32 +12,74 @@
         android:id="@+id/tv_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.548"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="61dp"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
         android:id="@+id/tv_nickName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="112dp"
-        tools:layout_editor_absoluteY="298dp" />
+        android:text="TextView" />
 
     <TextView
         android:id="@+id/tv_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="112dp"
-        tools:layout_editor_absoluteY="229dp" />
+        android:text="TextView" />
+
+    <DatePicker
+        android:id="@+id/datepicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:datePickerMode="spinner"
+        android:calendarViewShown="false"
+        android:text="생년월일"/>
+
+    <TextView
+        android:id="@+id/txtdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="8pt"
+        android:text="date"/>
+
+    <Button
+        android:id="@+id/btnnow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="저장"/>
+
+    <EditText
+        android:id="@+id/height"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="키" />
+
+    <EditText
+        android:id="@+id/weight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="몸무게" />
+
+    <Button
+        android:id="@+id/bmi_cal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="BMI 계산"/>
+
+    <EditText
+        android:id="@+id/bmi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <Button
         android:id="@+id/btn_logout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="logout" />
+
+    <Button
+        android:id="@+id/btnSignout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="회원탈퇴"/>
 
 </LinearLayout>

@@ -165,6 +165,34 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <TextView
+            android:id="@+id/BMR_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:text="BMR"
+            android:textColor="#2f3640"
+            android:textSize="18dp"
+            android:fontFamily="@font/bmjua"
+            app:layout_constraintEnd_toStartOf="@+id/BMR_kcal"
+            app:layout_constraintTop_toBottomOf="@+id/todayLayout" />
+
+        <TextView
+            android:id="@+id/BMR_kcal"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginRight="30dp"
+            android:text="1500.0 Kal"
+            android:textColor="#b71540"
+            android:fontFamily="@font/bmjua"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/todayLayout" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

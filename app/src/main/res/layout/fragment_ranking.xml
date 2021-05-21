@@ -25,6 +25,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
             <RadioButton
                 android:id="@+id/btn_week"
                 android:layout_width="205dp"
@@ -32,6 +33,7 @@
                 android:background="@drawable/radio_btn"
                 android:gravity="center"
                 android:button="@null"
+                android:fontFamily="@font/bmjua"
                 android:text="주간 랭킹"
                 android:textSize="18sp" />
             <RadioButton
@@ -41,6 +43,7 @@
                 android:background="@drawable/radio_btn"
                 android:gravity="center"
                 android:button="@null"
+                android:fontFamily="@font/bmjua"
                 android:text="월간 랭킹"
                 android:textSize="18sp" />
         </RadioGroup>

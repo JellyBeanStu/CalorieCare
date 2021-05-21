@@ -23,7 +23,9 @@
             android:layout_height="match_parent"
             android:background="@color/white"
             android:clickable="false"
+            android:fontFamily="@font/bmjua"
             android:text="달력"
+            android:textColor="#000000"
             android:textSize="18sp" />
 
         <Button
@@ -31,7 +33,9 @@
             android:layout_width="205dp"
             android:layout_height="match_parent"
             android:background="#FFEB3B"
+            android:fontFamily="@font/bmjua"
             android:text="그래프"
+            android:textColor="#636e72"
             android:textSize="18sp" />
 
     </LinearLayout>
@@ -41,6 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="50dp"
+        android:fontFamily="@font/bmjua"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

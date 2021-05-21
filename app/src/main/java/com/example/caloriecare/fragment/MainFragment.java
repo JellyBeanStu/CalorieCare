@@ -42,10 +42,10 @@ public class MainFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private String userID;
 
+    private String userID;
     ConstraintLayout exercise, diet, receipt;
-    TextView exerciseText, dietText, receiptText;
+    TextView exerciseText, dietText, receiptText, BMRText;
 
     public MainFragment() {
         // Required empty public constructor
@@ -94,6 +94,7 @@ public class MainFragment extends Fragment {
         exerciseText = v.findViewById(R.id.exercise_kcal);
         dietText = v.findViewById(R.id.diet_kcal);
         receiptText = v.findViewById(R.id.day_kcal);
+        BMRText = v.findViewById(R.id.BMR_kcal);
 
         exercise.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,17 +128,20 @@ public class MainFragment extends Fragment {
                     JSONObject jsonObject = new JSONObject(response);
                     boolean success = jsonObject.getBoolean("success");
                     if (success) {
-                         String intake = jsonObject.getString("intake");
-                         String burn = jsonObject.getString("burn");
-                         String dayCalorie= jsonObject.getString("dayCalorie");
+                         String intake = String.format("%.1f", jsonObject.getDouble("intake"));
+                         String burn = String.format("%.1f", jsonObject.getDouble("burn"));
+                         String dayCalorie= String.format("%.1f", jsonObject.getDouble("dayCalorie"));
+                         String BMR= String.format("%.1f", jsonObject.getDouble("BMR"));
+
                          double value = Double.parseDouble(dayCalorie);
                          if(value > 0) receiptText.setTextColor(Color.parseColor("#0c2461"));
                          else if(value < 0) receiptText.setTextColor(Color.parseColor("#b71540"));
                          else receiptText.setTextColor(Color.parseColor("#2f3640"));
+
                          exerciseText.setText(burn + " Kcal");
                          dietText.setText(intake + " Kcal");
                          receiptText.setText(dayCalorie + " Kcal");
-
+                         BMRText.setText(BMR + " Kcal");
                     } else {
                         Toast.makeText(getActivity(),jsonObject.toString(),Toast.LENGTH_LONG).show();
                         return;

@@ -12,14 +12,19 @@ public class updateProfileRequest extends StringRequest {
     final static private String URL = "http://118.67.135.180/CalorieCare/updateProfile.php";
     private Map<String, String> map;
 
-    public updateProfileRequest(String userID, String title, String log, String image, Response.Listener<String> listener) {
+
+    public updateProfileRequest(String userID, String userName, String userBirth,  boolean userGender, double height, double weight, double BMR, Response.Listener<String> listener) {
         super(Method.POST, URL, listener, null);
 
         map = new HashMap<>();
         map.put("userID",userID);
-        map.put("title",title);
-        map.put("log", log);
-        map.put("image", image);
+        map.put("userName",userName);
+        map.put("userBirth",userBirth);
+        map.put("userGender",Integer.toString(userGender? 1 : 0));
+        map.put("height",Double.toString(height));
+        map.put("weight",Double.toString(weight));
+        map.put("BMR",Double.toString(BMR));
+
     }
 
     @Override

@@ -12,7 +12,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/exerciseLayout"
-            android:layout_width="315dp"
+            android:layout_width="330dp"
             android:layout_height="150dp"
             android:layout_marginTop="90dp"
             android:background="@drawable/round_shadow"
@@ -64,7 +64,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/dietLayout"
-            android:layout_width="315dp"
+            android:layout_width="330dp"
             android:layout_height="150dp"
             android:layout_marginTop="30dp"
             android:background="@drawable/round_shadow"
@@ -116,7 +116,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/todayLayout"
-            android:layout_width="315dp"
+            android:layout_width="330dp"
             android:layout_height="150dp"
             android:layout_marginTop="30dp"
             android:background="@drawable/round_shadow"

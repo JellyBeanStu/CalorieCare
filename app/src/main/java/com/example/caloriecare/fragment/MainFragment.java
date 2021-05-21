@@ -127,13 +127,15 @@ public class MainFragment extends Fragment {
                     JSONObject jsonObject = new JSONObject(response);
                     boolean success = jsonObject.getBoolean("success");
                     if (success) {
-                         String intake = jsonObject.getString("intake");
-                         String burn = jsonObject.getString("burn");
-                         String dayCalorie= jsonObject.getString("dayCalorie");
+                         String intake = String.format("%.1f", jsonObject.getDouble("intake"));
+                         String burn = String.format("%.1f", jsonObject.getDouble("burn"));
+                         String dayCalorie= String.format("%.1f", jsonObject.getDouble("dayCalorie"));
+
                          double value = Double.parseDouble(dayCalorie);
                          if(value > 0) receiptText.setTextColor(Color.parseColor("#0c2461"));
                          else if(value < 0) receiptText.setTextColor(Color.parseColor("#b71540"));
                          else receiptText.setTextColor(Color.parseColor("#2f3640"));
+
                          exerciseText.setText(burn + " Kcal");
                          dietText.setText(intake + " Kcal");
                          receiptText.setText(dayCalorie + " Kcal");

@@ -30,12 +30,12 @@ public class DatePickerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        String userBirth = intent.getStringExtra("userBirth");
+        mDate = intent.getStringExtra("userBirth");
 
         setContentView(R.layout.activity_date_picker);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setyymmdd(userBirth);
+        setyymmdd(mDate);
 
         DatePicker datePicker = findViewById(R.id.vDatePicker);
         datePicker.init(mYear, mMonth, mDay,mOnDateChangedListener);

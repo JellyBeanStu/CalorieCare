@@ -88,8 +88,8 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         View v = inflater.inflate(R.layout.fragment_main, container, false);
+
         myData = new User(((MainActivity)getActivity()).getMyData());
         exercise = v.findViewById(R.id.exerciseLayout);
         diet = v.findViewById(R.id.dietLayout);

@@ -24,7 +24,6 @@ import com.example.caloriecare.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ExerciseActivity extends AppCompatActivity {
@@ -39,7 +38,6 @@ public class ExerciseActivity extends AppCompatActivity {
     List<ExerciseData> nowExerciseList;
     ExerciseData selectedExercise;
 
-    Data selected;
     double input = 0;
     double result = 0;
 

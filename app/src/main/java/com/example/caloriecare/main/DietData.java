@@ -1,7 +1,5 @@
 package com.example.caloriecare.main;
 
-import java.io.Serializable;
-
 public class DietData implements Comparable<DietData>{
     private String code, name, unit;
     private double calorie, servingSize;

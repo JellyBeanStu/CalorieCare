@@ -29,12 +29,15 @@ import java.util.List;
 
 public class ExerciseActivity extends AppCompatActivity {
     String userID;
+    double weight;
+    ExerciseCategory category;
 
-    SetSpinner spinner;
-    ArrayAdapter<String> largeAdapter;
-    List<ArrayAdapter<String>> mediumAdapter;
-    List<ArrayAdapter<String>> smallAdapter;
-    Spinner largeCategory, mediumCategory, smallCategory;
+    ArrayAdapter<String> allCategoryAdapter, exerciseAdapter;
+    Spinner allCategory, exerciseCategory;
+    String selectedCategory;
+
+    List<ExerciseData> nowExerciseList;
+    ExerciseData selectedExercise;
 
     Data selected;
     double input = 0;
@@ -44,68 +47,65 @@ public class ExerciseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise_input);
+
         Intent intent = getIntent();
         userID = intent.getStringExtra("userID");
+        weight = intent.getDoubleExtra("weight",50);
 
-        spinner = new SetSpinner(true);
+        readExcel excel = new readExcel(ExerciseActivity.this);
+        category = excel.readExerciseExcel();
 
-        largeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getExerciseCategory());
-        smallAdapter = new ArrayList<>();
+        allCategory = (Spinner) findViewById(R.id.all_category_exercise);
+        exerciseCategory = (Spinner) findViewById(R.id.exercise_category_exercise);
 
-        smallAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringExercise(0)));
-        smallAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringExercise(1)));
+        initAllCategory(true);
 
-        largeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        largeCategory = (Spinner) findViewById(R.id.large_category_exercise);
-        smallCategory = (Spinner) findViewById(R.id.small_category_exercise);
-
-        largeCategory.setAdapter(largeAdapter);
-        smallCategory.setAdapter(smallAdapter.get(0));
-
-        largeCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        allCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                smallCategory.setAdapter(smallAdapter.get(position));
-                TextView calorie = (TextView)findViewById(R.id.calorie_burn);
-                calorie.setText("#### Kcal");
+                selectedCategory = allCategory.getSelectedItem().toString();
+                initExerciseCategory();
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        smallCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        exerciseCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selected = spinner.getExercise().get(position);
-                EditText time = (EditText)findViewById(R.id.time);
-
-                time.addTextChangedListener(new TextWatcher() {
+                selectedExercise = nowExerciseList.get(position);
+                clear();
+                EditText times = (EditText)findViewById(R.id.time);
+                times.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
                     }
-                    @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        input = Double.parseDouble(s.toString());
-                        result = selected.getPerCalorie() * input;
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        if(s.length()==0) input = 0;
+                        else input = Double.parseDouble(s.toString());
+                        result = selectedExercise.getCalorie() * input * weight;
                         TextView calorie = (TextView)findViewById(R.id.calorie_burn);
-                        calorie.setText(Double.toString(result) + " Kcal");
+                        calorie.setText(String.format("%.1f",result) + " Kcal");
                     }
                     @Override
                     public void afterTextChanged(Editable s) {
-
                     } });
+
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
-
-        Button btnBack =(Button)findViewById(R.id.exercise_back);
-        Button btnEnter =(Button)findViewById(R.id.exercise_enter);
+        Button btnBack = (Button)findViewById(R.id.exercise_back);
+        Button btnEnter = (Button)findViewById(R.id.exercise_enter);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.putExtra("calorie", 0);
+                setResult(RESULT_OK,intent);
                 finish();
             }
         });
@@ -135,14 +135,32 @@ public class ExerciseActivity extends AppCompatActivity {
                         }
                     }
                 };
-
-                setLogRequest setlogRequest = new setLogRequest(userID, "EXERCISE", selected.getCode(),input,result, responseListener);
+                setLogRequest setlogRequest = new setLogRequest(userID, "EXERCISE", selectedExercise.getCode(),input, result, responseListener);
                 RequestQueue queue = Volley.newRequestQueue(ExerciseActivity.this);
                 queue.add(setlogRequest);
 
             }
         });
-
     }
 
+    public void clear(){
+        TextView calorie = (TextView)findViewById(R.id.calorie_burn);
+        TextView val = (TextView)findViewById(R.id.time);
+        calorie.setText("        Kcal");
+        val.setText("");
+    }
+    private void initExerciseCategory(){
+        nowExerciseList = category.getExerciseDataList(selectedCategory);
+        exerciseAdapter = new ArrayAdapter<String>(ExerciseActivity.this, android.R.layout.simple_spinner_item, category.getExerciseNameList(selectedCategory));
+        exerciseCategory.setAdapter(exerciseAdapter);
+        clear();
+    }
+    private void initAllCategory(boolean isFirst){
+        allCategoryAdapter = new ArrayAdapter<String>(ExerciseActivity.this, android.R.layout.simple_spinner_item, category.getCategory());
+        if(isFirst) allCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        allCategory.setAdapter(allCategoryAdapter);
+        selectedCategory = allCategory.getSelectedItem().toString(); //에러
+        initExerciseCategory();
+    }
 }

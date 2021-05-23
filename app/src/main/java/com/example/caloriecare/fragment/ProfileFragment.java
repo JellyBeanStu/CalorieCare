@@ -32,6 +32,7 @@ import com.example.caloriecare.DBrequest.updateProfileRequest;
 import com.example.caloriecare.LoginActivity;
 import com.example.caloriecare.MainActivity;
 import com.example.caloriecare.R;
+import com.example.caloriecare.User;
 import com.example.caloriecare.profile.DatePickerActivity;
 import com.kakao.network.ApiErrorCode;
 import com.kakao.network.ErrorResult;
@@ -63,15 +64,13 @@ public class ProfileFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private String userID, userName, userProfileImg, userEmail, userBirth;
-    private boolean userGender;
-    private int age;
-    private double weight, height, BMR;
+    private User myData;
 
     ImageView img_profile;
     TextView text_name, text_email, text_birth, text_bmr;
     EditText text_height, text_weight;
     ToggleButton tbtn_gender;
+
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -97,8 +96,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        userID = ((MainActivity)getActivity()).getUserID();
-
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -109,9 +106,11 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        myData = new User(((MainActivity)getActivity()).getMyData());
+
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        ImageView img_profile = v.findViewById(R.id.profile_user_profile);
+        img_profile = v.findViewById(R.id.profile_user_profile);
         text_name = v.findViewById(R.id.profile_text_name);
         text_email = v.findViewById(R.id.profile_text_email);
         text_birth = v.findViewById(R.id.profile_text_birth);
@@ -120,53 +119,15 @@ public class ProfileFragment extends Fragment {
         text_bmr = v.findViewById(R.id.profile_text_bmr);
         tbtn_gender = v.findViewById(R.id.profile_btn_gender);
 
-        Response.Listener<String> responseListener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    boolean success = jsonObject.getBoolean("success");
-
-                    if (success) {
-                        userName = jsonObject.getString("userName");
-                        userEmail = jsonObject.getString("userEmail");
-                        userProfileImg = jsonObject.getString("userProfile");
-                        userGender = jsonObject.getInt("userGender")!=0;
-                        userBirth = jsonObject.getString("userBirth");
-
-                        height = jsonObject.getDouble("height");
-                        weight = jsonObject.getDouble("weight");
-                        BMR = jsonObject.getDouble("BMR");
-
-                        setAge();
-
-                        if(userProfileImg != "null")
-                            Glide.with(getActivity()).load(userProfileImg).into(img_profile);//이미지
-
-                        text_name.setText(userName); // 이름
-                        text_email.setText(userEmail); // 이메일
-                        text_birth.setText(userBirth);
-                        tbtn_gender.setChecked(userGender);
-
-                        if(height !=0)
-                            text_height.setText(Double.toString(height));
-                        if(weight !=0)
-                            text_weight.setText(Double.toString(weight));
-                        text_bmr.setText(String.format("%.2f",BMR) + " Kcal");
-
-                    } else {
-                        Toast.makeText(getActivity(),jsonObject.toString(),Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                } catch (JSONException e) {
-                    Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-            }
-        };
-        getUserDataRequest userDataRequest = new getUserDataRequest(userID, responseListener);
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
-        queue.add(userDataRequest);
+        if(myData.getProfile() != "null")
+            Glide.with(getActivity()).load(myData.getProfile()).into(img_profile);//이미지
+        text_name.setText(myData.getName());
+        text_email.setText(myData.getEmail());
+        text_birth.setText(myData.getBirth());
+        tbtn_gender.setChecked(myData.getGender());
+        text_height.setText(Double.toString(myData.getHeight()));
+        text_weight.setText(Double.toString(myData.getWeight()));
+        text_bmr.setText(String.format("%.2f",myData.getBMR()) + " Kcal");
 
         LinearLayout layout_birth = v.findViewById(R.id.layout_birth);
         layout_birth.setOnClickListener(new View.OnClickListener() {
@@ -174,16 +135,18 @@ public class ProfileFragment extends Fragment {
             public void onClick(View view)
             {
                 Intent intent = new Intent(getActivity(), DatePickerActivity.class);
-                intent.putExtra("userBirth", userBirth);
+                intent.putExtra("userBirth", myData.getBirth());
                 startActivityForResult(intent, 1);
             }
         });
         text_height.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable edit) {
-                String s = edit.toString();
-                height = Double.parseDouble(s);
-                calculateBMR();
+                String s;
+                if(edit.length() == 0) s="0";
+                else s = edit.toString();
+                myData.setHeight(Double.parseDouble(s));
+                text_bmr.setText(String.format("%.2f",myData.getBMR()) + " Kcal");
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,
@@ -197,9 +160,12 @@ public class ProfileFragment extends Fragment {
         text_weight.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable edit) {
-                String s = edit.toString();
-                weight = Double.parseDouble(s);
-                calculateBMR();
+                String s;
+                if(edit.length() == 0) s="0";
+                else s = edit.toString();
+
+                myData.setWeight(Double.parseDouble(s));
+                text_bmr.setText(String.format("%.2f",myData.getBMR()) + " Kcal");
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,
@@ -214,8 +180,8 @@ public class ProfileFragment extends Fragment {
         v.findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                userName = text_name.getText().toString();
-                userGender = tbtn_gender.isChecked();
+                myData.setName(text_name.getText().toString());
+                myData.setGender(tbtn_gender.isChecked());
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
                     @Override
@@ -225,6 +191,7 @@ public class ProfileFragment extends Fragment {
                             boolean success1 = jsonObject.getBoolean("success1");
                             boolean success2 = jsonObject.getBoolean("success2");
                             if (success1 && success2) {
+                                ((MainActivity)getActivity()).setMyData(myData);
                                 Toast.makeText(getActivity(),"저장 완료!",Toast.LENGTH_LONG).show();
                             } else {
                                 Toast.makeText(getActivity(),jsonObject.toString(),Toast.LENGTH_LONG).show();
@@ -236,7 +203,7 @@ public class ProfileFragment extends Fragment {
                         }
                     }
                 };
-                updateProfileRequest updateprofileRequest = new updateProfileRequest(userID,userName,userBirth,userGender,height,weight,BMR, responseListener);
+                updateProfileRequest updateprofileRequest = new updateProfileRequest(myData.getID(),myData.getName(),myData.getBirth(),myData.getGender(),myData.getHeight(),myData.getWeight(),myData.getBMR(), responseListener);
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
                 queue.add(updateprofileRequest);
             }
@@ -315,7 +282,7 @@ public class ProfileFragment extends Fragment {
                                                 }
                                             }
                                         };
-                                        SignoutRequest signoutRequest = new SignoutRequest(userID, responseListener);
+                                        SignoutRequest signoutRequest = new SignoutRequest(myData.getID(), responseListener);
                                         RequestQueue queue = Volley.newRequestQueue(getActivity());
                                         queue.add(signoutRequest);
                                     }
@@ -339,29 +306,9 @@ public class ProfileFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK && requestCode==1){
             String date = data.getStringExtra("date");
-            userBirth = date;
+            myData.setBirth(date);
             text_birth.setText(date);
-            setAge();
-            calculateBMR();
+            text_bmr.setText(String.format("%.2f", myData.getBMR()) + " Kcal");
         }
-    }
-    public void setAge(){
-        Calendar calendar = new GregorianCalendar();
-        int mYear = calendar.get(Calendar.YEAR);
-        int mMonth = calendar.get(Calendar.MONTH);
-        int mDay = calendar.get(Calendar.DAY_OF_MONTH);
-
-        int userYear = Integer.parseInt(userBirth.substring(0,4));
-        int userMonth = Integer.parseInt(userBirth.substring(5,7));
-        int userDay = Integer.parseInt(userBirth.substring(8,10));
-
-        age = mYear-userYear-1;
-        if(mMonth > userMonth || (mMonth == userMonth && mDay>userDay)){
-            age = age+1;
-        }
-    }
-    public void calculateBMR(){
-        BMR = 655 + (9.6 * weight) + (1.8 * height) - (4.7 * age);
-        text_bmr.setText(String.format("%.2f", BMR) + " Kcal");
     }
 }

@@ -56,7 +56,7 @@ public class ExerciseFragment extends DialogFragment {
     ExerciseData selectedExercise;
 
     EditText times;
-    TextView calorie, perCalorie, unit;
+    TextView calorie, perCalorie;
 
     double input = 0;
     double result = 0;
@@ -175,8 +175,6 @@ public class ExerciseFragment extends DialogFragment {
                     RequestQueue queue = Volley.newRequestQueue(getActivity());
                     queue.add(setlogRequest);
                 }
-
-
             }
         });
 
@@ -197,7 +195,8 @@ public class ExerciseFragment extends DialogFragment {
     private void initAllCategory(boolean isFirst){
         allCategoryAdapter = new SpinnerAdapter(false, getActivity(), android.R.layout.simple_spinner_dropdown_item, category.getCategory());
         allCategory.setAdapter(allCategoryAdapter);
-        selectedCategory = allCategory.getSelectedItem().toString(); //에러
+        allCategory.setSelection(1);
+        selectedCategory = allCategory.getSelectedItem().toString();
         initExerciseCategory();
     }
 }

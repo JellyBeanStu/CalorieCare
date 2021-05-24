@@ -21,6 +21,9 @@ import com.example.caloriecare.main.ExerciseFragment;
 import com.example.caloriecare.main.ReceiptActivity;
 import com.example.caloriecare.main.ReceiptFragment;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class MainFragment extends Fragment {
 
     private User myData;
@@ -64,6 +67,12 @@ public class MainFragment extends Fragment {
                 ExerciseFragment dialog = ExerciseFragment.newInstance(myData.getID(), myData.getWeight(), new ExerciseFragment.OutputListener() {
                     @Override
                     public void onSaveComplete(double result) {
+                        String today = getToday();
+                        if(today.equals(myData.getDate())){
+                            myData.setIntake(0);
+                            myData.setBurn(0);
+                            myData.setDate(today);
+                        }
                         setExerciseCalorie(result);
                     }
                 });
@@ -76,6 +85,12 @@ public class MainFragment extends Fragment {
                 DietFragment dialog = DietFragment.newInstance(myData.getID(), new DietFragment.OutputListener() {
                     @Override
                     public void onSaveComplete(double result) {
+                        String today = getToday();
+                        if(today.equals(myData.getDate())){
+                            myData.setIntake(0);
+                            myData.setBurn(0);
+                            myData.setDate(today);
+                        }
                         setDietCalorie(result);
                     }
                 });
@@ -132,6 +147,15 @@ public class MainFragment extends Fragment {
         receiptText.setText(temp+String.format("%.1f",dayCalorie)+ " Kcal");
 
         ((MainActivity)getActivity()).setMyData(myData);
-
     }
+    private String getDay(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(date);
+    }
+    private String getToday(){
+        long now = System.currentTimeMillis();
+        Date date = new Date(now);
+        return getDay(date);
+    }
+
 }

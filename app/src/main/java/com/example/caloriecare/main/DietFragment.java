@@ -226,6 +226,7 @@ public class DietFragment extends DialogFragment {
     private void initLargeCategory(boolean isFirst){
         largeAdapter = new SpinnerAdapter(false, getActivity(), android.R.layout.simple_spinner_dropdown_item, category.getLargeCategory());
         largeCategory.setAdapter(largeAdapter);
+        largeCategory.setSelection(3);
         selectedLarge = largeCategory.getSelectedItem().toString();
         initMediumCategory();
     }

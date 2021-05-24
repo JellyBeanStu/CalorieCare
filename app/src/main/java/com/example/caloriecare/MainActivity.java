@@ -24,6 +24,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
 
     private User myData;
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                         double burn = jsonObject.getDouble("burn");
                         double dayCalorie = intake - burn - BMR;
 
-                        myData = new User(userID, userName, userEmail, userProfileImg, userBirth, userGender,height, weight, BMR, intake,burn,dayCalorie);
+                        myData = new User(userID, userName, userEmail, userProfileImg, userBirth, userGender,height, weight, BMR, intake,burn,dayCalorie,getToday());
 
                         FragmentTransaction transaction;
                         fragmentManager = getSupportFragmentManager();
@@ -137,4 +140,14 @@ public class MainActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
         queue.add(userDataRequest);
     }
+    private String getDay(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(date);
+    }
+    private String getToday(){
+        long now = System.currentTimeMillis();
+        Date date = new Date(now);
+        return getDay(date);
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.example.caloriecare.main;
 
-public class ExerciseData implements Comparable<ExerciseData>{
+public class ExerciseData extends Data implements Comparable<ExerciseData>{
+
     private String code, category, name;
     private double calorie;
 
@@ -13,8 +14,8 @@ public class ExerciseData implements Comparable<ExerciseData>{
         this.code = code;
         this.name = name;
         this.calorie = calorie;
-
     }
+
     public String getCode() {
         return code;
     }

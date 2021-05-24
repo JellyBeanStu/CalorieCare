@@ -65,8 +65,10 @@ public class DietCategory {
     public List<String> getDietNameList(String small){
         List<String> dietCategory = new ArrayList<>();
         List<String> temp = new ArrayList<String>(smallCategory.get(small));    //CODE List
-        for(int i=0;i<temp.size();i++)
-            dietCategory.add(AllDietCategory.get(temp.get(i)).getName());
+        for(int i=0;i<temp.size();i++){
+            DietData data = AllDietCategory.get(temp.get(i));
+            dietCategory.add(data.getName());
+        }
         Collections.sort(dietCategory);
         return dietCategory;
     }

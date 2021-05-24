@@ -1,6 +1,6 @@
 package com.example.caloriecare.main;
 
-public class DietData implements Comparable<DietData>{
+public class DietData extends Data implements Comparable<DietData>{
     private String code, name, unit;
     private double calorie, servingSize;
     private String large, medium, small;
@@ -16,7 +16,7 @@ public class DietData implements Comparable<DietData>{
         this.medium="";
         this.small="";
     }
-    public DietData(String code, String large, String medium, String small, String name,double servingSize,String unit, double calorie){
+    public DietData(String code, String large, String medium, String small, String name, double servingSize,String unit, double calorie){
         this.code = code;
         this.large = large;
         this.medium = medium;
@@ -26,6 +26,7 @@ public class DietData implements Comparable<DietData>{
         this.unit = unit;
         this.calorie = calorie;
     }
+
     public String getCode() {
         return code;
     }

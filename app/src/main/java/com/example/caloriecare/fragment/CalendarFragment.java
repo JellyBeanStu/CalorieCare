@@ -27,6 +27,7 @@ import com.example.caloriecare.calendar.SaturdayDecorator;
 import com.example.caloriecare.calendar.SundayDecorator;
 import com.example.caloriecare.calendar.TextDecorator;
 import com.example.caloriecare.main.DietData;
+import com.example.caloriecare.main.ExerciseData;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
@@ -42,23 +43,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link CalendarFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class CalendarFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private String userID;
-    private HashMap<String, DietData> AllFoodData;
+    private HashMap<String, DietData> AllDietData;
+    private HashMap<String, ExerciseData> AllExerciseData;
 
     private String getDay(Date date){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -69,26 +58,12 @@ public class CalendarFragment extends Fragment {
         Date date = new Date(now);
         return getDay(date);
     }
-
     public CalendarFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CalendarFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static CalendarFragment newInstance(String param1, String param2) {
+    public static CalendarFragment newInstance() {
         CalendarFragment fragment = new CalendarFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -96,18 +71,14 @@ public class CalendarFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userID = ((MainActivity)getActivity()).getUserID();
-
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        AllDietData = ((MainActivity)getActivity()).getDietCategory().getAllFoodCategory();
+        AllExerciseData = ((MainActivity)getActivity()).getExerciseCategory().getAllExerciseCategory();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_calendar, container, false);
-        // Inflate the layout for this fragment
 
         Button btnGraph = v.findViewById(R.id.button5);
         Button btnCalendar = v.findViewById(R.id.button6);

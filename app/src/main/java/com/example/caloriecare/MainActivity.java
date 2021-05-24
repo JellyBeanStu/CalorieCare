@@ -16,6 +16,9 @@ import com.android.volley.toolbox.Volley;
 import com.example.caloriecare.DBrequest.getUserDataRequest;
 import com.example.caloriecare.fragment.*;
 
+import com.example.caloriecare.main.DietCategory;
+import com.example.caloriecare.main.ExerciseCategory;
+import com.example.caloriecare.main.readExcel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONException;
@@ -25,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
 
     private User myData;
     private FragmentManager fragmentManager;
+    private DietCategory dietCategory;
+    private ExerciseCategory exerciseCategory;
 
     public void setMyData(User myData) {
         this.myData = myData;
@@ -35,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     public String getUserID(){
         return this.myData.getID();
     }
+    public DietCategory getDietCategory(){return this.dietCategory;}
+    public ExerciseCategory getExerciseCategory(){return this.exerciseCategory;}
 
     public FragmentManager getfragmentManager(){return this.fragmentManager;}
 
@@ -44,10 +51,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         myData = new User();
-
         Intent intent = getIntent();
         String userID = intent.getStringExtra("userID");
         boolean isExist = intent.getBooleanExtra("isExistingUser",true);
+
+        readExcel excel = new readExcel(MainActivity.this);
+        dietCategory = excel.readDietExcel();
+        exerciseCategory = excel.readExerciseExcel();
 
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override

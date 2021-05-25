@@ -16,15 +16,23 @@ import com.android.volley.toolbox.Volley;
 import com.example.caloriecare.DBrequest.getUserDataRequest;
 import com.example.caloriecare.fragment.*;
 
+import com.example.caloriecare.main.DietCategory;
+import com.example.caloriecare.main.ExerciseCategory;
+import com.example.caloriecare.main.readExcel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
 
     private User myData;
     private FragmentManager fragmentManager;
+    private DietCategory dietCategory;
+    private ExerciseCategory exerciseCategory;
 
     public void setMyData(User myData) {
         this.myData = myData;
@@ -35,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     public String getUserID(){
         return this.myData.getID();
     }
+    public DietCategory getDietCategory(){return this.dietCategory;}
+    public ExerciseCategory getExerciseCategory(){return this.exerciseCategory;}
 
     public FragmentManager getfragmentManager(){return this.fragmentManager;}
 
@@ -44,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         myData = new User();
-
         Intent intent = getIntent();
         String userID = intent.getStringExtra("userID");
         boolean isExist = intent.getBooleanExtra("isExistingUser",true);
@@ -71,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                         double burn = jsonObject.getDouble("burn");
                         double dayCalorie = intake - burn - BMR;
 
-                        myData = new User(userID, userName, userEmail, userProfileImg, userBirth, userGender,height, weight, BMR, intake,burn,dayCalorie);
+                        myData = new User(userID, userName, userEmail, userProfileImg, userBirth, userGender,height, weight, BMR, intake,burn,dayCalorie,getToday());
 
                         FragmentTransaction transaction;
                         fragmentManager = getSupportFragmentManager();
@@ -95,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                                 FragmentTransaction transaction = fragmentManager.beginTransaction();
+
                                 switch(item.getItemId()){
                                     case R.id.item_home:
                                         transaction.replace(R.id.main_layout, mainFragment).commitAllowingStateLoss();
@@ -113,6 +123,10 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
+                        readExcel excel = new readExcel(MainActivity.this);
+                        dietCategory = excel.readDietExcel();
+                        exerciseCategory = excel.readExerciseExcel();
+
                     } else {
                         Toast.makeText(MainActivity.this,jsonObject.toString(),Toast.LENGTH_LONG).show();
                         return;
@@ -127,4 +141,14 @@ public class MainActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
         queue.add(userDataRequest);
     }
+    private String getDay(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(date);
+    }
+    private String getToday(){
+        long now = System.currentTimeMillis();
+        Date date = new Date(now);
+        return getDay(date);
+    }
+
 }

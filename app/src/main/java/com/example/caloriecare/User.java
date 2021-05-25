@@ -8,10 +8,11 @@ public class User {
     private boolean gender;
     private double height, weight, BMR, intake, burn, dayCalorie;
     private int age;
-
+    private String date;
     public User(){
     }
     public User(User data){
+        this.date = data.getDate();
         this.ID = data.getID();
         this.name = data.getName();
         this.email = data.getEmail();
@@ -26,7 +27,7 @@ public class User {
         this.dayCalorie = data.getDayCalorie();
         this.age = data.getAge();
     }
-    public User(String ID, String name, String email, String profile, String birth, boolean gender, double height, double weight, double BMR, double intake, double burn, double dayCalorie){
+    public User(String ID, String name, String email, String profile, String birth, boolean gender, double height, double weight, double BMR, double intake, double burn, double dayCalorie, String date){
         this.ID = ID;
         this.name = name;
         this.email = email;
@@ -39,7 +40,7 @@ public class User {
         this.intake = intake;
         this.burn = burn;
         this.dayCalorie = dayCalorie;
-
+        this.date = date;
         if(this.height<=0) this.height=170;
         if(this.weight<=0) this.weight=50;
         setAge();
@@ -93,6 +94,13 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDate() {
+        return date;
+    }
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public void setBirth(String birth) {

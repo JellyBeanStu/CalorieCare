@@ -28,17 +28,8 @@
         </activity>
         <activity android:name=".MainActivity" />
         <activity
-            android:name=".main.ExerciseActivity"
-            android:theme="@style/Theme.Popup" />
-        <activity
-            android:name=".main.DietActivity"
-            android:theme="@style/Theme.Popup" />
-        <activity
             android:name=".main.ReceiptActivity"
             android:theme="@style/Theme.Popup" />
-        <activity
-            android:name=".profile.DatePickerActivity"
-            android:theme="@style/Theme.Popup"/>
     </application>
 
 </manifest>

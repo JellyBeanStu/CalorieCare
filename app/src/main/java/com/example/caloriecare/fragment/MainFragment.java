@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
@@ -19,12 +20,15 @@ import com.android.volley.toolbox.Volley;
 import com.example.caloriecare.DBrequest.getTodaylogRequest;
 import com.example.caloriecare.MainActivity;
 import com.example.caloriecare.R;
+import com.example.caloriecare.User;
 import com.example.caloriecare.main.DietActivity;
 import com.example.caloriecare.main.ExerciseActivity;
 import com.example.caloriecare.main.ReceiptActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,10 +46,11 @@ public class MainFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private String userID;
+
+    private User myData;
 
     ConstraintLayout exercise, diet, receipt;
-    TextView exerciseText, dietText, receiptText;
+    TextView exerciseText, dietText, receiptText, BMRText;
 
     public MainFragment() {
         // Required empty public constructor
@@ -72,12 +77,11 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        userID = ((MainActivity)getActivity()).getUserID();
-
     }
 
     @Override
@@ -86,7 +90,7 @@ public class MainFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View v = inflater.inflate(R.layout.fragment_main, container, false);
-
+        myData = new User(((MainActivity)getActivity()).getMyData());
         exercise = v.findViewById(R.id.exerciseLayout);
         diet = v.findViewById(R.id.dietLayout);
         receipt = v.findViewById(R.id.todayLayout);
@@ -94,65 +98,89 @@ public class MainFragment extends Fragment {
         exerciseText = v.findViewById(R.id.exercise_kcal);
         dietText = v.findViewById(R.id.diet_kcal);
         receiptText = v.findViewById(R.id.day_kcal);
+        BMRText = v.findViewById(R.id.BMR_kcal);
 
         exercise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), ExerciseActivity.class);
-                intent.putExtra("userID", userID);
-                startActivity(intent);
+                intent.putExtra("userID", myData.getID());
+                intent.putExtra("weight",myData.getWeight());
+                startActivityForResult(intent, 1);
             }
         });
         diet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), DietActivity.class);
-                intent.putExtra("userID", userID);
-                startActivity(intent);
+                intent.putExtra("userID", myData.getID());
+                startActivityForResult(intent, 2);
             }
         });
         receipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), ReceiptActivity.class);
-                intent.putExtra("userID", userID);
+                intent.putExtra("userID", myData.getID());
                 startActivity(intent);
             }
         });
 
-        Response.Listener<String> responseListener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    boolean success = jsonObject.getBoolean("success");
-                    if (success) {
-                         String intake = jsonObject.getString("intake");
-                         String burn = jsonObject.getString("burn");
-                         String dayCalorie= jsonObject.getString("dayCalorie");
-                         double value = Double.parseDouble(dayCalorie);
-                         if(value > 0) receiptText.setTextColor(Color.parseColor("#0c2461"));
-                         else if(value < 0) receiptText.setTextColor(Color.parseColor("#b71540"));
-                         else receiptText.setTextColor(Color.parseColor("#2f3640"));
-                         exerciseText.setText(burn + " Kcal");
-                         dietText.setText(intake + " Kcal");
-                         receiptText.setText(dayCalorie + " Kcal");
+        dietText.setText(String.format("%.1f",myData.getIntake())+ " Kcal");
+        exerciseText.setText(String.format("%.1f",myData.getBurn())+ " Kcal");
+        setReceiptCalorie();
 
-                    } else {
-                        Toast.makeText(getActivity(),jsonObject.toString(),Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                } catch (JSONException e) {
-                    Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-            }
-        };
-        getTodaylogRequest gettodaylogRequest = new getTodaylogRequest(userID, responseListener);
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
-        queue.add(gettodaylogRequest);
-
+        BMRText.setText(String.format("%.1f", myData.getBMR()) + " Kcal");
 
         return v;
     }
+    public void setExerciseCalorie(double addCalorie){
+        double burn = myData.getBurn();
+        myData.setBurn(burn + addCalorie);
+        exerciseText.setText(String.format("%.1f",myData.getBurn())+ " Kcal");
+        setReceiptCalorie();
+    }
+    public void setDietCalorie(double addCalorie){
+        double intake = myData.getIntake();
+        myData.setIntake(intake + addCalorie);
+        dietText.setText(String.format("%.1f",myData.getIntake())+ " Kcal");
+        setReceiptCalorie();
+    }
+    public void setReceiptCalorie(){
+        double burn = myData.getBurn();
+        double intake = myData.getIntake();
+        double BMR = myData.getBMR();
+        myData.setDayCalorie(intake - burn - BMR);
+        double dayCalorie = myData.getDayCalorie();
+
+        String temp = "";
+        if(dayCalorie > 0){
+            receiptText.setTextColor(Color.parseColor("#0c2461"));
+            temp = " ";
+        }
+        else if(dayCalorie < 0) receiptText.setTextColor(Color.parseColor("#b71540"));
+        else receiptText.setTextColor(Color.parseColor("#2f3640"));
+
+        receiptText.setText(temp+String.format("%.1f",dayCalorie)+ " Kcal");
+
+        ((MainActivity)getActivity()).setMyData(myData);
+
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        double calorie = data.getDoubleExtra("calorie",0);
+        if(resultCode == RESULT_OK){
+            switch(requestCode){
+                case 1:
+                    setExerciseCalorie(calorie);
+                    break;
+                case 2:
+                    setDietCalorie(calorie);
+                    break;
+            }
+        }
+    }
+
 }

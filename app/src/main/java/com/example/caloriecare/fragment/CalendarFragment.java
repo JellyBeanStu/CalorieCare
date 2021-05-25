@@ -26,6 +26,7 @@ import com.example.caloriecare.calendar.DayLog;
 import com.example.caloriecare.calendar.SaturdayDecorator;
 import com.example.caloriecare.calendar.SundayDecorator;
 import com.example.caloriecare.calendar.TextDecorator;
+import com.example.caloriecare.main.DietData;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
@@ -39,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,6 +58,7 @@ public class CalendarFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private String userID;
+    private HashMap<String, DietData> AllFoodData;
 
     private String getDay(Date date){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

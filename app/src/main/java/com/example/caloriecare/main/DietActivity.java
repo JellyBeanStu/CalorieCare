@@ -24,19 +24,18 @@ import com.example.caloriecare.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DietActivity extends AppCompatActivity {
     String userID;
+    DietCategory category;
 
-    SetSpinner spinner;
-    ArrayAdapter<String> largeAdapter;
-    List<ArrayAdapter<String>> mediumAdapter;
-    List<ArrayAdapter<String>> smallAdapter;
-    Spinner largeCategory, mediumCategory, smallCategory;
+    ArrayAdapter<String> largeAdapter, mediumAdapter, smallAdapter, foodAdapter;
+    Spinner largeCategory, mediumCategory, smallCategory, foodCategory;
+    String selectedLarge, selectedMedium, selectedSmall;
+    List<DietData> nowFoodList;
+    DietData selectedFood;
 
-    Data selected;
     double input = 0;
     double result=0;
 
@@ -44,70 +43,86 @@ public class DietActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diet_input);
+
         Intent intent = getIntent();
         userID = intent.getStringExtra("userID");
 
-        spinner = new SetSpinner(false);
+        readExcel excel = new readExcel(DietActivity.this);
+        category = excel.readDietExcel();
 
-        largeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getDietCategory());
-        smallAdapter = new ArrayList<>();
-
-        smallAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringDiet(0)));
-        smallAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringDiet(1)));
-        smallAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringDiet(2)));
-        smallAdapter.add(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinner.getStringDiet(3)));
-
-        largeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         largeCategory = (Spinner) findViewById(R.id.large_category_diet);
+        mediumCategory = (Spinner) findViewById(R.id.medium_category_diet);
         smallCategory = (Spinner) findViewById(R.id.small_category_diet);
+        foodCategory = (Spinner) findViewById(R.id.food_category_diet);
 
-        largeCategory.setAdapter(largeAdapter);
-        smallCategory.setAdapter(smallAdapter.get(0));
+        initLargeCategory(true);
 
         largeCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                smallCategory.setAdapter(smallAdapter.get(position));
-                TextView calorie = (TextView)findViewById(R.id.calorie_intake);
-
-                calorie.setText("#### Kcal");
+                selectedLarge = largeCategory.getSelectedItem().toString();
+                initMediumCategory();
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
+        mediumCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedMedium = mediumCategory.getSelectedItem().toString();
+                initSmallCategory();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
         smallCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selected = spinner.getDiet().get(position);
-                EditText time = (EditText)findViewById(R.id.grams);
-
-                time.addTextChangedListener(new TextWatcher() {
+                selectedSmall = smallCategory.getSelectedItem().toString();
+                initFoodCategory();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        foodCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedFood = nowFoodList.get(position);
+                clear();
+                EditText times = (EditText)findViewById(R.id.grams);
+                times.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                     }
-                    @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        input = Double.parseDouble(s.toString());
-                        result = selected.getPerCalorie() * input;
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        if(s.length()==0) input = 0;
+                        else input = Double.parseDouble(s.toString());
+                        result = selectedFood.getCalorie() * input;
                         TextView calorie = (TextView)findViewById(R.id.calorie_intake);
-                        calorie.setText(Double.toString(result) + " Kcal");
+                        calorie.setText(String.format("%.1f",result) + " Kcal");
                     }
                     @Override
                     public void afterTextChanged(Editable s) {
                     } });
+
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
 
         Button btnBack =(Button)findViewById(R.id.diet_back);
         Button btnEnter =(Button)findViewById(R.id.diet_enter);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.putExtra("calorie", 0);
+                setResult(RESULT_OK,intent);
                 finish();
             }
         });
@@ -122,7 +137,9 @@ public class DietActivity extends AppCompatActivity {
                             boolean success = jsonObject.getBoolean("success");
                             if (success) {
                                 Toast.makeText(DietActivity.this, "저장 완료!", Toast.LENGTH_SHORT).show();
-
+                                Intent intent = new Intent();
+                                intent.putExtra("calorie", result);
+                                setResult(RESULT_OK,intent);
                                 finish();
 
                             } else {
@@ -135,8 +152,7 @@ public class DietActivity extends AppCompatActivity {
                         }
                     }
                 };
-
-                setLogRequest setlogRequest = new setLogRequest(userID, "DIET", selected.getCode(),input, result, responseListener);
+                setLogRequest setlogRequest = new setLogRequest(userID, "DIET", selectedFood.getCode(),input, result, responseListener);
                 RequestQueue queue = Volley.newRequestQueue(DietActivity.this);
                 queue.add(setlogRequest);
 
@@ -144,5 +160,35 @@ public class DietActivity extends AppCompatActivity {
         });
     }
 
-
+    public void clear(){
+        TextView calorie = (TextView)findViewById(R.id.calorie_intake);
+        TextView val = (TextView)findViewById(R.id.grams);
+        calorie.setText("        Kcal");
+        val.setText("");
+    }
+    private void initFoodCategory(){
+        nowFoodList = category.getDietDataList(selectedSmall);
+        foodAdapter = new ArrayAdapter<String>(DietActivity.this, android.R.layout.simple_spinner_item, category.getDietNameList(selectedSmall));
+        foodCategory.setAdapter(foodAdapter);
+        clear();
+    }
+    private void initSmallCategory(){
+        smallAdapter = new ArrayAdapter<String>(DietActivity.this, android.R.layout.simple_spinner_item, category.getSmallCategory(selectedMedium));
+        smallCategory.setAdapter(smallAdapter);
+        selectedSmall = smallCategory.getSelectedItem().toString();
+        initFoodCategory();
+    }
+    private void initMediumCategory(){
+        mediumAdapter = new ArrayAdapter<String>(DietActivity.this, android.R.layout.simple_spinner_item, category.getMediumCategory(selectedLarge));
+        mediumCategory.setAdapter(mediumAdapter);
+        selectedMedium = mediumCategory.getSelectedItem().toString();
+        initSmallCategory();
+    }
+    private void initLargeCategory(boolean isFirst){
+        largeAdapter = new ArrayAdapter<String>(DietActivity.this, android.R.layout.simple_spinner_item, category.getLargeCategory());
+        if(isFirst) largeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        largeCategory.setAdapter(largeAdapter);
+        selectedLarge = largeCategory.getSelectedItem().toString();
+        initMediumCategory();
+    }
 }

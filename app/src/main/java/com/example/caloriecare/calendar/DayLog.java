@@ -3,11 +3,11 @@ package com.example.caloriecare.calendar;
 import java.util.ArrayList;
 
 public class DayLog {
-
+    //그 날의 결과값
     private final String date;
-    private final double intake;
+    private final double intake; //
     private final double burn;
-    private final double dayCalorie;
+    private final double dayCalorie; //
 
     public DayLog(){
         date = "2021-05-10";

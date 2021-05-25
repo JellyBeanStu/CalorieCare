@@ -121,6 +121,7 @@ public class RankingFragment extends Fragment {
 
                             users.get(userID).pushLog(new DayLog(logDate,intake,burn,dayCalorie));
                         }
+
                         //
                         //
                         // 위 데이터를 각 유저별로 정리하고, 순서를 매기기

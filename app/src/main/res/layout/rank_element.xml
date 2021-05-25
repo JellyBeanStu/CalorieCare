@@ -5,13 +5,15 @@
     android:layout_width="match_parent"
     android:layout_margin="5dp"
     android:clickable="true"
+    android:background="#fafafa"
     android:weightSum="3"
     android:gravity="center"
     android:layout_height="wrap_content">
     <TextView
         android:id="@+id/user_rank"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="80dp"
+        android:background="#fafafa"
         android:gravity="center_vertical"
         android:layout_margin="5dp"
         android:padding="5dp"
@@ -19,9 +21,11 @@
         android:layout_weight="1"/>
     <ImageView
         android:id="@+id/user_image"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="#fafafa"
         android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
         android:tooltipText="image"
         android:layout_margin="5dp"
         android:padding="5dp"
@@ -29,7 +33,8 @@
     <TextView
         android:id="@+id/user_name"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:background="#fafafa"
+        android:layout_height="80dp"
         android:gravity="center_vertical"
         android:layout_margin="5dp"
         android:padding="5dp"
@@ -38,8 +43,9 @@
     <TextView
         android:id="@+id/user_calorie"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="80dp"
         android:gravity="center_vertical|end"
+        android:background="#fafafa"
         android:layout_margin="5dp"
         android:padding="5dp"
         android:text="Calorie"

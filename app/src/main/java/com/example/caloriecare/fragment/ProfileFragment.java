@@ -1,11 +1,9 @@
 package com.example.caloriecare.fragment;
 
-import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
@@ -14,7 +12,9 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,13 +27,12 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.caloriecare.DBrequest.SignoutRequest;
-import com.example.caloriecare.DBrequest.getUserDataRequest;
 import com.example.caloriecare.DBrequest.updateProfileRequest;
 import com.example.caloriecare.LoginActivity;
 import com.example.caloriecare.MainActivity;
 import com.example.caloriecare.R;
 import com.example.caloriecare.User;
-import com.example.caloriecare.profile.DatePickerActivity;
+import com.example.caloriecare.profile.DatePickerFragment;
 import com.kakao.network.ApiErrorCode;
 import com.kakao.network.ErrorResult;
 import com.kakao.usermgmt.UserManagement;
@@ -46,8 +45,6 @@ import org.json.JSONObject;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import static android.app.Activity.RESULT_OK;
-
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ProfileFragment#newInstance} factory method to
@@ -57,11 +54,16 @@ public class ProfileFragment extends Fragment {
 
     private User myData;
     private double height, weight, bmr, age;
+    private String birth;
 
     ImageView img_profile;
-    TextView text_name, text_email, text_birth, text_bmr;
-    EditText text_height, text_weight;
+    TextView text_email, text_birth, text_bmr;
+    EditText text_name, text_height, text_weight;
     ToggleButton tbtn_gender;
+
+    Animation startAnimation;
+    Button btn_save;
+    boolean blink;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -75,7 +77,7 @@ public class ProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         myData = new User(((MainActivity)getActivity()).getMyData());
-
+        blink = false;
     }
 
     @Override
@@ -95,57 +97,112 @@ public class ProfileFragment extends Fragment {
 
         if(myData.getProfile() != "null")
             Glide.with(getActivity()).load(myData.getProfile()).into(img_profile);//이미지
+
         text_email.setText(myData.getEmail());
         text_name.setText(myData.getName());
         text_birth.setText(myData.getBirth());
         tbtn_gender.setChecked(myData.getGender());
-        text_height.setText(Double.toString(myData.getHeight()));
-        text_weight.setText(Double.toString(myData.getWeight()));
+        text_height.setText(String.format("%.1f", myData.getHeight()));
+        text_weight.setText(String.format("%.1f", myData.getWeight()));
         text_bmr.setText(String.format("%.2f",myData.getBMR()) + " Kcal");
+        LinearLayout layout_birth = v.findViewById(R.id.layout_birth);
+        btn_save = v.findViewById(R.id.btn_save);
 
         height = myData.getHeight();
         weight = myData.getWeight();
         bmr = myData.getBMR();
         age = myData.getAge();
+        birth = myData.getBirth();
 
-        LinearLayout layout_birth = v.findViewById(R.id.layout_birth);
+        text_name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable edit) {
+                if(edit.toString().equals(myData.getName())) {
+                    blink = false;
+                    btn_save.clearAnimation();
+                }else if(!blink){
+                    blink = true;
+                    btn_save.startAnimation(startAnimation);
+                }
+            }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+            }
+        });
         layout_birth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
-                Intent intent = new Intent(getActivity(), DatePickerActivity.class);
-                intent.putExtra("userBirth", text_birth.getText().toString());
-                startActivityForResult(intent, 1);
+                DatePickerFragment dialog = DatePickerFragment.newInstance(birth, new DatePickerFragment.OutputListener() {
+                    @Override
+                    public void onSaveComplete(String date) {
+                        if(birth.equals(date)) return;
+
+                        birth = date;
+                        text_birth.setText(birth);
+                        setAge(birth);
+                        calculateBMR();
+
+                        if(birth.equals(myData.getBirth())){
+                            blink = false;
+                            btn_save.clearAnimation();
+                        }else if(!blink){
+                            blink = true;
+                            btn_save.startAnimation(startAnimation);
+                        }
+                    }
+                });
+                dialog.show(getParentFragmentManager(), "addDatePickerDialog");
             }
         });
         text_height.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable edit) {
-                String s;
-                if(edit.length() == 0) s="0";
-                else s = edit.toString();
-                height = Double.parseDouble(s);
+                String str;
+                if(edit.length() == 0) str="0";
+                else str = edit.toString();
+
+                height = Double.parseDouble(str);
                 calculateBMR();
-                text_bmr.setText(String.format("%.2f", bmr) + " Kcal");
+
+                if(myData.getHeight() == height){
+                    blink = false;
+                    btn_save.clearAnimation();
+                }else if(!blink){
+                    blink = true;
+                    btn_save.startAnimation(startAnimation);
+                }
             }
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count,
-                                          int after) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
             @Override
-            public void onTextChanged(CharSequence s, int start, int before,
-                                      int count) {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
             }
         });
         text_weight.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable edit) {
-                String s;
-                if(edit.length() == 0) s="0";
-                else s = edit.toString();
-                weight = Double.parseDouble(s);
+                String str;
+                if(edit.length() == 0) str="0";
+                else str = edit.toString();
+
+                weight = Double.parseDouble(str);
                 calculateBMR();
-                text_bmr.setText(String.format("%.2f",bmr) + " Kcal");
+
+                if(myData.getWeight() == Double.parseDouble(str)){
+                    blink = false;
+                    btn_save.clearAnimation();
+                }else if(!blink){
+                    blink = true;
+                    btn_save.startAnimation(startAnimation);
+                }
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,
@@ -156,10 +213,27 @@ public class ProfileFragment extends Fragment {
                                       int count) {
             }
         });
+        tbtn_gender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                if(myData.getGender() == tbtn_gender.isChecked()){
+                    blink = false;
+                    btn_save.clearAnimation();
+                }else if(!blink){
+                    blink = true;
+                    btn_save.startAnimation(startAnimation);
+                }
+            }
+        });
 
-        v.findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
+        startAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.blink_animation);
+        btn_save.clearAnimation();
+        btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                btn_save.clearAnimation();
+                blink = false;
+
                 myData.setName(text_name.getText().toString());
                 myData.setGender(tbtn_gender.isChecked());
                 myData.setBirth(text_birth.getText().toString());
@@ -286,19 +360,9 @@ public class ProfileFragment extends Fragment {
 
         return v;
     }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK && requestCode==1){
-            String date = data.getStringExtra("date");
-            text_birth.setText(date);
-            setAge(date);
-            calculateBMR();
-            text_bmr.setText(String.format("%.2f", bmr) + " Kcal");
-        }
-    }
     public void calculateBMR(){
         bmr = 655 + (9.6 * weight) + (1.8 * height) - (4.7 * age);
+        text_bmr.setText(String.format("%.2f", bmr) + " Kcal");
     }
     public void setAge(String birth){
         Calendar calendar = new GregorianCalendar();

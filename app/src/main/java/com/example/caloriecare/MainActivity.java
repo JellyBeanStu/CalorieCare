@@ -58,10 +58,6 @@ public class MainActivity extends AppCompatActivity {
         String userID = intent.getStringExtra("userID");
         boolean isExist = intent.getBooleanExtra("isExistingUser",true);
 
-        readExcel excel = new readExcel(MainActivity.this);
-        dietCategory = excel.readDietExcel();
-        exerciseCategory = excel.readExerciseExcel();
-
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -108,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                                 FragmentTransaction transaction = fragmentManager.beginTransaction();
+
                                 switch(item.getItemId()){
                                     case R.id.item_home:
                                         transaction.replace(R.id.main_layout, mainFragment).commitAllowingStateLoss();
@@ -125,6 +122,10 @@ public class MainActivity extends AppCompatActivity {
                                 return true;
                             }
                         });
+
+                        readExcel excel = new readExcel(MainActivity.this);
+                        dietCategory = excel.readDietExcel();
+                        exerciseCategory = excel.readExerciseExcel();
 
                     } else {
                         Toast.makeText(MainActivity.this,jsonObject.toString(),Toast.LENGTH_LONG).show();

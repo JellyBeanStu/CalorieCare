@@ -30,7 +30,6 @@ public class MainFragment extends Fragment {
 
     ConstraintLayout exercise, diet, receipt;
     TextView exerciseText, dietText, receiptText, BMRText;
-    DietCategory category;
 
     public MainFragment() {
         // Required empty public constructor

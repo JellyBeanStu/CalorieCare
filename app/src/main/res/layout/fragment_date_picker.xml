@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".profile.DatePickerFragment">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/alert_white_border"
+        android:orientation="vertical">
+
+        <DatePicker
+            android:id="@+id/vDatePicker"
+            style="@android:style/Widget.DeviceDefault.DatePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="197dp"
+            android:calendarViewShown="false"
+            android:datePickerMode="spinner" />
+
+        <Button
+            android:id="@+id/vDateEnter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_save"
+            android:fontFamily="@font/bmjua"
+            android:letterSpacing="0.3"
+            android:text="확인"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+</FrameLayout>

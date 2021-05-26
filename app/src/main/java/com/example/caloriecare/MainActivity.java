@@ -80,14 +80,16 @@ public class MainActivity extends AppCompatActivity {
                         double burn = jsonObject.getDouble("burn");
                         double dayCalorie = intake - burn - BMR;
 
-                        myData = new User(userID, userName, userEmail, userProfileImg, userBirth, userGender,height, weight, BMR, intake,burn,dayCalorie,getToday());
+                        myData = new User(userID, userName, userEmail, userProfileImg, userBirth, userGender,height, weight, BMR, intake,burn,dayCalorie, getToday());
 
                         FragmentTransaction transaction;
                         fragmentManager = getSupportFragmentManager();
                         transaction = fragmentManager.beginTransaction();
 
                         MainFragment mainFragment = new MainFragment();
+                     //   RankingFragment rankingFragment = new RankingFragment();
                         RankingFragment rankingFragment = new RankingFragment();
+
                         CalendarFragment calendarFragment = new CalendarFragment();
                         ProfileFragment profileFragment = new ProfileFragment();
 

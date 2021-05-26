@@ -35,17 +35,17 @@ public class readExcel {
 
                 if(sheet != null){
                     int rowIndexStart=1;
-                    int rowTotal = sheet.getColumn(0).length;
-
+                    int rowTotal = 58308;//sheet.getColumn(0).length;
+                    String code, large, medium, small, name;
+                    DietData data;
                     for(int row=rowIndexStart;row<rowTotal;row++){
+                        code = sheet.getCell(0,row).getContents();
+                        large = sheet.getCell(1,row).getContents();
+                        medium = sheet.getCell(2,row).getContents();
+                        small = sheet.getCell(3,row).getContents();
+                        name = sheet.getCell(4,row).getContents();
 
-                        String code = sheet.getCell(0,row).getContents();
-                        String large = sheet.getCell(1,row).getContents();
-                        String medium = sheet.getCell(2,row).getContents();
-                        String small = sheet.getCell(3,row).getContents();
-                        String name = sheet.getCell(4,row).getContents();
-
-                        DietData data = new DietData(code,large,medium,small,name,
+                        data = new DietData(code,large,medium,small,name,
                                 Double.parseDouble(sheet.getCell(5,row).getContents()),
                                 sheet.getCell(6,row).getContents(),
                                 Double.parseDouble(sheet.getCell(7,row).getContents()));
@@ -89,13 +89,15 @@ public class readExcel {
                     int rowIndexStart = 0;
                     int rowTotal = sheet.getColumn(0).length;
 
-                    for (int row = rowIndexStart; row < rowTotal; row++) {
-                        String code = sheet.getCell(0, row).getContents();
-                        String cate = sheet.getCell(1, row).getContents();
-                        String name = sheet.getCell(2, row).getContents();
-                        double calorie = Double.parseDouble(sheet.getCell(3, row).getContents());
+                    String code, cate,name;
+                    ExerciseData data;
 
-                        ExerciseData data = new ExerciseData(code, cate, name, calorie);
+                    for (int row = rowIndexStart; row < rowTotal; row++) {
+                        code = sheet.getCell(0, row).getContents();
+                        cate = sheet.getCell(1, row).getContents();
+                        name = sheet.getCell(2, row).getContents();
+
+                        data = new ExerciseData(code, cate, name, Double.parseDouble(sheet.getCell(3, row).getContents()));
 
                         if (!exerciseCategory.containsKey(cate))
                             exerciseCategory.put(cate, new HashSet<>());

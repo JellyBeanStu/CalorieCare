@@ -312,7 +312,7 @@ public class RankingFragment extends Fragment {
                             result = String.format("%.1f",ThisConditionRank.get(i).getAll())+ " Kcal";
                         else result = String.format("%.1f",ThisConditionRank.get(i).getBurn())+ " Kcal";
                         myCalorie.setText(result);
-                        ratio = (i+1) / ThisConditionRank.size() * 100;
+                        ratio = (i+1.0)* 100 / ThisConditionRank.size() ;
                         myRatio.setText(String.format("%.1f",ratio) + " %");
                         return;
                     }

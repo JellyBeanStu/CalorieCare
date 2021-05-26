@@ -2,59 +2,50 @@ package com.example.caloriecare.ranking;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.util.Base64;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.caloriecare.R;
-import com.example.caloriecare.calendar.DayLog;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import com.example.caloriecare.R;
+
 import java.util.List;
 
 public class RankListAdapter extends RecyclerView.Adapter<RankListAdapter.ViewHolder> {
     public Context mContext;
-    public HashMap<Integer, RankVal> mUsers;
+    public List<User> mUsers;
+    public boolean type = true;
     Bitmap bitmap;
 
 
-    public RankListAdapter(Context Context, HashMap<Integer, RankVal> userRanks)
+    public RankListAdapter(Context Context, boolean type, List<User> userRanks)
     {
         this.mContext = Context;
         this.mUsers = userRanks;
+        this.type = type;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
-        public TextView edt_rank;
-        public TextView edt_name;
-        public TextView edt_calorie;
-        public ImageView edt_image;
+        public TextView rank;
+        public TextView name;
+        public TextView calorie;
+        public ImageView image;
 
         public ViewHolder(View view)
         {
             super(view);
-
-            edt_rank = view.findViewById(R.id.user_rank);
-            edt_image = view.findViewById(R.id.user_image);
-            edt_name = view.findViewById(R.id.user_name);
-            edt_calorie = view.findViewById(R.id.user_calorie);
+            rank = view.findViewById(R.id.user_rank);
+            image = view.findViewById(R.id.user_image);
+            name = view.findViewById(R.id.user_name);
+            calorie = view.findViewById(R.id.user_calorie);
         }
     }
     @NonNull
@@ -66,16 +57,49 @@ public class RankListAdapter extends RecyclerView.Adapter<RankListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String a = Integer.toString(position + 1);
-        holder.edt_rank.setText(a);
+        String rank = Integer.toString(position + 1);
+        ImageLoadTask profile = new ImageLoadTask(mUsers.get(position).getProfile(),holder.image);
+        profile.execute();
 
-        ImageLoadTask task = new ImageLoadTask(mUsers.get(position).getProfile(),holder.edt_image);
-        task.execute();
+        String kcal ="";
+        if(type)
+            kcal = String.format("%.1f",mUsers.get(position).getAll())+" Kcal";
+        else kcal = String.format("%.1f",mUsers.get(position).getBurn()) + " Kcal";
 
-        holder.edt_name.setText(mUsers.get(position).getName());
+        holder.rank.setText(rank);
+        holder.name.setText(mUsers.get(position).getName());
+        holder.calorie.setText(kcal);
 
-        String s = String.format("%.1f",mUsers.get(position).getRankCalorie());
-        holder.edt_calorie.setText(s);
+        holder.rank.setTypeface(Typeface.createFromAsset(mContext.getAssets(),"bmjua.ttf"));
+        holder.name.setTypeface(Typeface.createFromAsset(mContext.getAssets(),"bmjua.ttf"));
+        holder.calorie.setTypeface(Typeface.createFromAsset(mContext.getAssets(),"bmjua.ttf"));
+
+        holder.rank.setTextColor(Color.BLACK);
+        holder.name.setTextColor(Color.BLACK);
+        holder.calorie.setTextColor(Color.BLACK);
+        holder.rank.setTextSize(20);
+        holder.name.setTextSize(18);
+        holder.name.setSingleLine();
+        holder.calorie.setTextSize(20);
+
+        LinearLayout.LayoutParams rankAttr = (LinearLayout.LayoutParams)holder.rank.getLayoutParams();
+        LinearLayout.LayoutParams imageAttr = (LinearLayout.LayoutParams)holder.image.getLayoutParams();
+        LinearLayout.LayoutParams nameAttr = (LinearLayout.LayoutParams)holder.name.getLayoutParams();
+        LinearLayout.LayoutParams calorieAttr = (LinearLayout.LayoutParams)holder.calorie.getLayoutParams();
+
+        rankAttr.width = 50;
+        rankAttr.leftMargin = 50;
+        imageAttr.width = 175;
+        imageAttr.height = 175;
+        imageAttr.leftMargin = 0;
+        nameAttr.leftMargin = 40;
+        calorieAttr.rightMargin = 50;
+
+        holder.rank.setLayoutParams(rankAttr);
+        holder.image.setLayoutParams(imageAttr);
+        holder.name.setLayoutParams(nameAttr);
+        holder.calorie.setLayoutParams(calorieAttr);
+
     }
 
     @Override

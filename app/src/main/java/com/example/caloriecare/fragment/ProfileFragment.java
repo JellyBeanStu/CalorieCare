@@ -376,7 +376,7 @@ public class ProfileFragment extends Fragment {
 
         int age = mYear-userYear-1;
         if(mMonth > userMonth || (mMonth == userMonth && mDay>userDay)){
-            age = age+1;
+            age++;
         }
         this.age =  age;
     }

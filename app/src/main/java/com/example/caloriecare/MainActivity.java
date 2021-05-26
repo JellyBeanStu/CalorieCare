@@ -87,7 +87,9 @@ public class MainActivity extends AppCompatActivity {
                         transaction = fragmentManager.beginTransaction();
 
                         MainFragment mainFragment = new MainFragment();
+                     //   RankingFragment rankingFragment = new RankingFragment();
                         RankingFragment rankingFragment = new RankingFragment();
+
                         CalendarFragment calendarFragment = new CalendarFragment();
                         ProfileFragment profileFragment = new ProfileFragment();
 

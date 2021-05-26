@@ -70,7 +70,8 @@ public class LoginActivity extends AppCompatActivity{
                                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                         intent.putExtra("userID", userID);
                                         intent.putExtra("isExistingUser",isExistingUser);
-
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(intent);
 
                                     } else { // 로그인에 실패한 경우

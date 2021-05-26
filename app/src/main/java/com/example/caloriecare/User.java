@@ -8,7 +8,7 @@ import java.util.GregorianCalendar;
 public class User {
     private String ID, name, email, profile, birth;
     private boolean gender;
-    private double height, weight, BMR, intake, burn, dayCalorie;
+    private double height, weight, intake, burn, dayCalorie;
     private int age;
     private String date;
     public User(){
@@ -23,13 +23,12 @@ public class User {
         this.gender = data.getGender();
         this.height = data.getHeight();
         this.weight = data.getWeight();
-        this.BMR = data.getBMR();
         this.intake = data.getIntake();
         this.burn = data.getBurn();
         this.dayCalorie = data.getDayCalorie();
         this.age = data.getAge();
     }
-    public User(String ID, String name, String email, String profile, String birth, boolean gender, double height, double weight, double BMR, double intake, double burn, double dayCalorie, String date){
+    public User(String ID, String name, String email, String profile, String birth, boolean gender, double height, double weight, double intake, double burn, double dayCalorie, String date){
         this.ID = ID;
         this.name = name;
         this.email = email;
@@ -38,7 +37,6 @@ public class User {
         this.gender = gender;
         this.height = height;
         this.weight = weight;
-        this.BMR = BMR;
         this.intake = intake;
         this.burn = burn;
         this.dayCalorie = dayCalorie;
@@ -46,13 +44,9 @@ public class User {
         if(this.height<=0) this.height=170;
         if(this.weight<=0) this.weight=50;
         setAge();
-        calculateBMR();
     }
     public int getAge() {
         return age;
-    }
-    public double getBMR() {
-        return BMR;
     }
 
     public double getHeight() {
@@ -108,11 +102,6 @@ public class User {
     public void setBirth(String birth) {
         this.birth = birth;
         setAge();
-        calculateBMR();
-    }
-
-    public void setBMR(double BMR) {
-        this.BMR = BMR;
     }
 
     public void setBurn(double burn) {
@@ -133,7 +122,6 @@ public class User {
 
     public void setHeight(double height) {
         this.height = height;
-        calculateBMR();
     }
 
     public void setIntake(double intake) {
@@ -146,7 +134,6 @@ public class User {
 
     public void setWeight(double weight) {
         this.weight = weight;
-        calculateBMR();
     }
 
     public void setAge(){
@@ -164,10 +151,6 @@ public class User {
             age++;
         }
         this.age = age;
-    }
-
-    public void calculateBMR(){
-        this.BMR = 655 + (9.6 * weight) + (1.8 * height) - (4.7 * age);
     }
 
 }

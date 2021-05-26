@@ -1,6 +1,5 @@
 package com.example.caloriecare.fragment;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -15,10 +14,8 @@ import android.widget.TextView;
 import com.example.caloriecare.MainActivity;
 import com.example.caloriecare.R;
 import com.example.caloriecare.User;
-import com.example.caloriecare.main.DietCategory;
 import com.example.caloriecare.main.DietFragment;
 import com.example.caloriecare.main.ExerciseFragment;
-import com.example.caloriecare.main.ReceiptActivity;
 import com.example.caloriecare.main.ReceiptFragment;
 
 import java.text.SimpleDateFormat;
@@ -27,9 +24,8 @@ import java.util.Date;
 public class MainFragment extends Fragment {
 
     private User myData;
-
     ConstraintLayout exercise, diet, receipt;
-    TextView exerciseText, dietText, receiptText, BMRText;
+    TextView exerciseText, dietText, receiptText, RecommendedText, BMRText;
 
     public MainFragment() {
         // Required empty public constructor
@@ -58,7 +54,8 @@ public class MainFragment extends Fragment {
         exerciseText = v.findViewById(R.id.exercise_kcal);
         dietText = v.findViewById(R.id.diet_kcal);
         receiptText = v.findViewById(R.id.day_kcal);
-        BMRText = v.findViewById(R.id.BMR_kcal);
+        RecommendedText = v.findViewById(R.id.recommended_calorie);
+        BMRText = v.findViewById(R.id.bmr);
 
         exercise.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,10 +96,6 @@ public class MainFragment extends Fragment {
         receipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(getActivity(), ReceiptActivity.class);
-//                intent.putExtra("userID", myData.getID());
-//                startActivity(intent);
-
                 ReceiptFragment dialog = ReceiptFragment.newInstance(myData.getID());
                 dialog.show(getParentFragmentManager(), "addReceiptDialog");
 
@@ -112,8 +105,10 @@ public class MainFragment extends Fragment {
         dietText.setText(String.format("%.1f",myData.getIntake())+ " Kcal");
         exerciseText.setText(String.format("%.1f",myData.getBurn())+ " Kcal");
         setReceiptCalorie();
-        BMRText.setText(String.format("%.1f", myData.getBMR()) + " Kcal");
 
+
+        BMRText.setText(String.format("%.1f",calculateBMR())+" Kcal");
+        RecommendedText.setText(String.format("%.1f",calculateRecommendedCalorie())+" Kcal");
         return v;
     }
     public void setExerciseCalorie(double addCalorie){
@@ -131,8 +126,7 @@ public class MainFragment extends Fragment {
     public void setReceiptCalorie(){
         double burn = myData.getBurn();
         double intake = myData.getIntake();
-        double BMR = myData.getBMR();
-        myData.setDayCalorie(intake - burn - BMR);
+        myData.setDayCalorie(intake - burn);
         double dayCalorie = myData.getDayCalorie();
         String temp = "";
         if(dayCalorie > 0){
@@ -154,6 +148,27 @@ public class MainFragment extends Fragment {
         long now = System.currentTimeMillis();
         Date date = new Date(now);
         return getDay(date);
+    }
+    private double calculateRecommendedCalorie(){
+        double recommendedWeight, Recommended;
+        int k;
+        if(myData.getGender()){
+            k = 21;
+        }else{
+            k = 22;
+        }
+        recommendedWeight = k * myData.getHeight() * myData.getHeight() / 10000;
+        Recommended = recommendedWeight * 30;
+        return Recommended;
+    }
+    private double calculateBMR(){
+        double BMR;
+        if(myData.getGender()){
+            BMR = 655.1 + (9.56*myData.getWeight()) + (1.85*myData.getHeight()) - (4.68*myData.getAge());
+        }else{
+            BMR = 66.47 + (13.75*myData.getWeight()) + (5*myData.getHeight()) - (6.76*myData.getAge());
+        }
+        return BMR;
     }
 
 }

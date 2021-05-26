@@ -115,13 +115,14 @@ public class CalendarFragment extends Fragment {
 
                     if (success) {
                         JSONArray jsonArray = jsonObject.getJSONArray("logs");
+                        JSONObject temp;
+                        String date;
+                        double intake, burn;
                         for(int i=0;i<jsonArray.length();i++){
-                            JSONObject temp = jsonArray.getJSONObject(i);
-                            String date = temp.getString("date");
-                            double intake = temp.getDouble("intake");
-                            double burn = temp.getDouble("burn");
-                            double BMR = temp.getDouble("BMR");
-                            double dayCalorie = temp.getDouble("dayCalorie");
+                            temp = jsonArray.getJSONObject(i);
+                            date = temp.getString("date");
+                            intake = temp.getDouble("intake");
+                            burn = temp.getDouble("burn");
 
                             daylogs.add(new DayLog(date, intake, burn));
                         }
@@ -218,8 +219,6 @@ public class CalendarFragment extends Fragment {
                                     String date = temp.getString("date");
                                     double intake = temp.getDouble("intake");
                                     double burn = temp.getDouble("burn");
-                                    double BMR = temp.getDouble("BMR");
-                                    double dayCalorie = temp.getDouble("dayCalorie");
 
                                     daylogs.add(new DayLog(date, intake, burn));
                                 }

@@ -62,11 +62,41 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <TextView
+            android:id="@+id/bmr"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginRight="50dp"
+            android:fontFamily="@font/bmjua"
+            android:gravity="right"
+            android:text="1500.0 Kal"
+            android:textColor="#b71540"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/exerciseLayout" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
+            android:fontFamily="@font/bmjua"
+            android:singleLine="true"
+            android:text="기초 대사량"
+            android:textColor="#2f3640"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toStartOf="@+id/bmr"
+            app:layout_constraintTop_toBottomOf="@+id/exerciseLayout" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/dietLayout"
             android:layout_width="330dp"
             android:layout_height="150dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="35dp"
             android:background="@drawable/round_shadow"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -118,7 +148,7 @@
             android:id="@+id/todayLayout"
             android:layout_width="330dp"
             android:layout_height="150dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="35dp"
             android:background="@drawable/round_shadow"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -166,32 +196,33 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-            android:id="@+id/BMR_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:text="BMR"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
+            android:fontFamily="@font/bmjua"
+            android:singleLine="true"
+            android:text="하루 열량 필요량"
             android:textColor="#2f3640"
             android:textSize="18dp"
-            android:fontFamily="@font/bmjua"
-            app:layout_constraintEnd_toStartOf="@+id/BMR_kcal"
-            app:layout_constraintTop_toBottomOf="@+id/todayLayout" />
+            app:layout_constraintEnd_toStartOf="@+id/recommended_calorie"
+            app:layout_constraintTop_toBottomOf="@+id/dietLayout" />
 
         <TextView
-            android:id="@+id/BMR_kcal"
-            android:layout_width="110dp"
+            android:id="@+id/recommended_calorie"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginRight="30dp"
-            android:text="1500.0 Kal"
-            android:textColor="#b71540"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginRight="50dp"
             android:fontFamily="@font/bmjua"
+            android:gravity="right"
+            android:text="1500.0 Kal"
+            android:textColor="#0c2461"
             android:textSize="18dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/todayLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/dietLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

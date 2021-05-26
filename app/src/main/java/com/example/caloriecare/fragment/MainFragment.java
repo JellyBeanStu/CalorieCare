@@ -67,7 +67,7 @@ public class MainFragment extends Fragment {
                     @Override
                     public void onSaveComplete(double result) {
                         String today = getToday();
-                        if(today.equals(myData.getDate())){
+                        if(!today.equals(myData.getDate())){
                             myData.setIntake(0);
                             myData.setBurn(0);
                             myData.setDate(today);
@@ -85,7 +85,7 @@ public class MainFragment extends Fragment {
                     @Override
                     public void onSaveComplete(double result) {
                         String today = getToday();
-                        if(today.equals(myData.getDate())){
+                        if(!today.equals(myData.getDate())){
                             myData.setIntake(0);
                             myData.setBurn(0);
                             myData.setDate(today);
@@ -134,7 +134,6 @@ public class MainFragment extends Fragment {
         double BMR = myData.getBMR();
         myData.setDayCalorie(intake - burn - BMR);
         double dayCalorie = myData.getDayCalorie();
-
         String temp = "";
         if(dayCalorie > 0){
             receiptText.setTextColor(Color.parseColor("#0c2461"));

@@ -57,8 +57,6 @@ public class RankingFragment extends Fragment {
     List<User> ThisConditionRank = new ArrayList<>();
     List<User> ViewUserRank = new ArrayList<>();
 
-
-
     private String rankChk = "week"; // week = false || month = true
     private int genderChk = 0; // 전체 = 0 || 남성 = 1 || 여성 = 2
     private int ageChk = 0; // 0 = 전체 || 1 = 10대 이하 || 2 = 20대 || 3 = 30대 || 4 = 40대 || 5 = 50대 || 6 = 60대 이상

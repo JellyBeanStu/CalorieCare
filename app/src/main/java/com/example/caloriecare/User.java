@@ -1,6 +1,8 @@
 package com.example.caloriecare;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class User {
@@ -167,5 +169,6 @@ public class User {
     public void calculateBMR(){
         this.BMR = 655 + (9.6 * weight) + (1.8 * height) - (4.7 * age);
     }
+
 }
 

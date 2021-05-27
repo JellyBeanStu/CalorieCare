@@ -53,11 +53,11 @@ import java.util.GregorianCalendar;
 public class ProfileFragment extends Fragment {
 
     private User myData;
-    private double height, weight, bmr, age;
+    private double height, weight, age;
     private String birth;
 
     ImageView img_profile;
-    TextView text_email, text_birth, text_bmr;
+    TextView text_email, text_birth;
     EditText text_name, text_height, text_weight;
     ToggleButton tbtn_gender;
 
@@ -92,7 +92,6 @@ public class ProfileFragment extends Fragment {
         text_birth = v.findViewById(R.id.profile_text_birth);
         text_height = v.findViewById(R.id.profile_text_height);
         text_weight = v.findViewById(R.id.profile_text_weight);
-        text_bmr = v.findViewById(R.id.profile_text_bmr);
         tbtn_gender = v.findViewById(R.id.profile_btn_gender);
 
         if(myData.getProfile() != "null")
@@ -104,13 +103,11 @@ public class ProfileFragment extends Fragment {
         tbtn_gender.setChecked(myData.getGender());
         text_height.setText(String.format("%.1f", myData.getHeight()));
         text_weight.setText(String.format("%.1f", myData.getWeight()));
-        text_bmr.setText(String.format("%.2f",myData.getBMR()) + " Kcal");
         LinearLayout layout_birth = v.findViewById(R.id.layout_birth);
         btn_save = v.findViewById(R.id.btn_save);
 
         height = myData.getHeight();
         weight = myData.getWeight();
-        bmr = myData.getBMR();
         age = myData.getAge();
         birth = myData.getBirth();
 
@@ -146,14 +143,11 @@ public class ProfileFragment extends Fragment {
                         birth = date;
                         text_birth.setText(birth);
                         setAge(birth);
-                        calculateBMR();
 
                         if(birth.equals(myData.getBirth())){
-                            blink = false;
-                            btn_save.clearAnimation();
+                            setBlink(false);
                         }else if(!blink){
-                            blink = true;
-                            btn_save.startAnimation(startAnimation);
+                            setBlink(true);
                         }
                     }
                 });
@@ -168,14 +162,11 @@ public class ProfileFragment extends Fragment {
                 else str = edit.toString();
 
                 height = Double.parseDouble(str);
-                calculateBMR();
 
                 if(myData.getHeight() == height){
-                    blink = false;
-                    btn_save.clearAnimation();
+                    setBlink(false);
                 }else if(!blink){
-                    blink = true;
-                    btn_save.startAnimation(startAnimation);
+                    setBlink(true);
                 }
             }
             @Override
@@ -192,16 +183,12 @@ public class ProfileFragment extends Fragment {
                 String str;
                 if(edit.length() == 0) str="0";
                 else str = edit.toString();
-
                 weight = Double.parseDouble(str);
-                calculateBMR();
 
-                if(myData.getWeight() == Double.parseDouble(str)){
-                    blink = false;
-                    btn_save.clearAnimation();
+                if(myData.getWeight() == weight){
+                    setBlink(false);
                 }else if(!blink){
-                    blink = true;
-                    btn_save.startAnimation(startAnimation);
+                    setBlink(true);
                 }
             }
             @Override
@@ -217,11 +204,9 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view){
                 if(myData.getGender() == tbtn_gender.isChecked()){
-                    blink = false;
-                    btn_save.clearAnimation();
+                    setBlink(false);
                 }else if(!blink){
-                    blink = true;
-                    btn_save.startAnimation(startAnimation);
+                    setBlink(true);
                 }
             }
         });
@@ -231,15 +216,13 @@ public class ProfileFragment extends Fragment {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btn_save.clearAnimation();
-                blink = false;
+                setBlink(false);
 
                 myData.setName(text_name.getText().toString());
                 myData.setGender(tbtn_gender.isChecked());
                 myData.setBirth(text_birth.getText().toString());
                 myData.setHeight(height);
                 myData.setWeight(weight);
-                myData.setBMR(bmr);
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
                     @Override
@@ -261,7 +244,7 @@ public class ProfileFragment extends Fragment {
                         }
                     }
                 };
-                updateProfileRequest updateprofileRequest = new updateProfileRequest(myData.getID(),myData.getName(),myData.getBirth(),myData.getGender(),myData.getHeight(),myData.getWeight(),myData.getBMR(), responseListener);
+                updateProfileRequest updateprofileRequest = new updateProfileRequest(myData.getID(),myData.getName(),myData.getBirth(),myData.getGender(),myData.getHeight(),myData.getWeight(), responseListener);
                 RequestQueue queue = Volley.newRequestQueue(getActivity());
                 queue.add(updateprofileRequest);
             }
@@ -288,7 +271,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view){
                 new AlertDialog.Builder(getActivity())
-                        .setMessage("탈퇴하시겠습니까?")
+                        .setMessage("정말 탈퇴하시겠습니까?")
                         .setPositiveButton("네", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -360,10 +343,6 @@ public class ProfileFragment extends Fragment {
 
         return v;
     }
-    public void calculateBMR(){
-        bmr = 655 + (9.6 * weight) + (1.8 * height) - (4.7 * age);
-        text_bmr.setText(String.format("%.2f", bmr) + " Kcal");
-    }
     public void setAge(String birth){
         Calendar calendar = new GregorianCalendar();
         int mYear = calendar.get(Calendar.YEAR);
@@ -379,5 +358,14 @@ public class ProfileFragment extends Fragment {
             age++;
         }
         this.age =  age;
+    }
+    public void setBlink(boolean flag){
+        blink = flag;
+        btn_save.setClickable(flag);
+        if(flag){
+            btn_save.startAnimation(startAnimation);
+        }else{
+            btn_save.clearAnimation();
+        }
     }
 }

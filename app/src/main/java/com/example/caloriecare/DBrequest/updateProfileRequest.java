@@ -13,7 +13,7 @@ public class updateProfileRequest extends StringRequest {
     private Map<String, String> map;
 
 
-    public updateProfileRequest(String userID, String userName, String userBirth,  boolean userGender, double height, double weight, double BMR, Response.Listener<String> listener) {
+    public updateProfileRequest(String userID, String userName, String userBirth,  boolean userGender, double height, double weight, Response.Listener<String> listener) {
         super(Method.POST, URL, listener, null);
 
         map = new HashMap<>();
@@ -23,7 +23,6 @@ public class updateProfileRequest extends StringRequest {
         map.put("userGender",Integer.toString(userGender? 1 : 0));
         map.put("height",Double.toString(height));
         map.put("weight",Double.toString(weight));
-        map.put("BMR",Double.toString(BMR));
 
     }
 

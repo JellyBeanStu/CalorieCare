@@ -68,7 +68,9 @@
                 android:id="@+id/sp_age"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1.5" />
+                android:textAlignment="gravity"
+                android:layout_weight="1.5"
+                android:gravity="right" />
             <View
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

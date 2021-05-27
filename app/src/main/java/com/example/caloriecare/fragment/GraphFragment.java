@@ -1,15 +1,23 @@
 package com.example.caloriecare.fragment;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -18,13 +26,12 @@ import com.android.volley.toolbox.Volley;
 import com.example.caloriecare.DBrequest.AtoBDaylogsRequest;
 import com.example.caloriecare.MainActivity;
 import com.example.caloriecare.R;
-import com.example.caloriecare.calendar.BodyData;
-import com.example.caloriecare.calendar.DayLog;
 
+import com.example.caloriecare.graph.DateRangeFragment;
+import com.example.caloriecare.graph.NDSpinner;
+import com.example.caloriecare.ranking.SpinnerAdapter;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -33,25 +40,27 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import static android.view.View.TEXT_ALIGNMENT_CENTER;
 
 public class GraphFragment extends Fragment {
 
     private String userID;
     private LineChart lineChart;
+    private ArrayAdapter<String> typeAdapter;
+    private TextView tv_begin, tv_end;
+    LineData chartData = new LineData();
 
-    private String getDay(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return sdf.format(date);
-    }
-    private String getToday(){
-        long now = System.currentTimeMillis();
-        Date date = new Date(now);
-        return getDay(date);
-    }
+    private String dateBegin="2021-05-24", dateEnd="2021-05-30";
+
+    List<String> itemType = new ArrayList(Arrays.asList(new String[]{"이번주", "이번달", "올해", "직접 선택"}));
 
     public GraphFragment() {
         // Required empty public constructor
@@ -68,14 +77,23 @@ public class GraphFragment extends Fragment {
         userID = ((MainActivity)getActivity()).getUserID();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_graph, container, false);
+        lineChart = v.findViewById(R.id.chart);
 
         Button btnGraph = v.findViewById(R.id.button5);
         Button btnCalendar = v.findViewById(R.id.button6);
+        tv_begin = (TextView)v.findViewById(R.id.beginDate);
+        tv_end = (TextView)v.findViewById(R.id.endDate);
+    //    Spinner sptype = v.findViewById(R.id.spinner);
+        NDSpinner sptype = new NDSpinner(getContext());
+        sptype.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+        
+        ((LinearLayout)v.findViewById(R.id.graph_inner_layout)).addView(sptype);
 
         btnCalendar.setBackgroundColor(Color.parseColor("#FFEB3B"));
         btnCalendar.setEnabled(true);
@@ -91,6 +109,111 @@ public class GraphFragment extends Fragment {
             }
         });
 
+        typeAdapter = new SpinnerAdapter(v.getContext(),android.R.layout.simple_spinner_dropdown_item, itemType);
+        sptype.setAdapter(typeAdapter);
+        sptype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override   // position 으로 몇번째 것이 선택됬는지 값을 넘겨준다
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                chartData = new LineData();
+                switch(position){
+                    case 0:
+                        getThisWeek();
+                        break;
+                    case 1:
+                        getThisMonth();
+                        break;
+                    case 2:
+                        getThisYear();
+                        break;
+                    case 3:
+                        getChoice();
+                        break;
+                }
+                if(position != 3){
+                    createChart();
+                    tv_begin.setText(dateBegin);
+                    tv_end.setText(dateEnd);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        return v;
+    }
+    public String dayafter(String date) throws ParseException {
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date to = transFormat.parse(date);
+
+        Calendar day = Calendar.getInstance();
+        day.setTime(to);
+        day.add(Calendar.DATE , 1);
+        String beforeDate = new java.text.SimpleDateFormat("yyyy-MM-dd").format(day.getTime());
+        return beforeDate;
+    }
+    public void getThisWeek(){
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, (2-c.get(Calendar.DAY_OF_WEEK)));
+        dateBegin = getDay(c.getTime());
+        c.add(Calendar.DATE, (8-c.get(Calendar.DAY_OF_WEEK)));
+        dateEnd = getDay(c.getTime());
+    }
+    public void getThisMonth(){
+        Calendar c = Calendar.getInstance();
+        int day = c.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int month = c.get(Calendar.MONTH);
+        int year = c.get(Calendar.YEAR);
+        c.set(year,month,1);
+        dateBegin = getDay(c.getTime());
+        c.set(year,month,day);
+        dateEnd = getDay(c.getTime());
+    }
+    public void getThisYear(){
+        Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        c.set(year,0,1);
+        dateBegin = getDay(c.getTime());
+        c.set(year,11,31);
+        dateEnd = getDay(c.getTime());
+    }
+    public void getChoice(){
+        DateRangeFragment AtoB = DateRangeFragment.newInstance(dateBegin, dateEnd, new DateRangeFragment.OutputListener() {
+            @Override
+            public void onSaveComplete(String begin, String end) {
+                dateBegin = begin;
+                dateEnd = end;
+
+                chartData = new LineData();
+                createChart();
+
+                tv_begin.setText(dateBegin);
+                tv_end.setText(dateEnd);
+            }
+        });
+        AtoB.show(getParentFragmentManager(), "addDateRangeDialog");
+    }
+
+
+    //x date, y value
+    public void createLine(List<Entry> entries, String labelName, int color){
+        LineDataSet lineDataSet = new LineDataSet(entries, labelName);
+        lineDataSet.setColor(ContextCompat.getColor(getContext(), color));
+
+        lineDataSet.setValueTextSize(30); //값 텍스트 크기
+        lineDataSet.setLineWidth(3); //줄 두께
+        lineDataSet.setFillAlpha(90); //투명도 채우기 65
+        lineDataSet.setCircleRadius(5f); //데이터점 반지름 5f로
+        lineDataSet.setCircleColor(ContextCompat.getColor(getContext(), color));
+
+        chartData.addDataSet(lineDataSet);
+        chartData.setValueTextColor(ContextCompat.getColor(getContext(), color));
+        chartData.setValueTextSize(9);
+
+        lineChart.setData(chartData);
+
+    }
+    public void createChart() {
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -100,49 +223,35 @@ public class GraphFragment extends Fragment {
 
                     if (success) {
                         JSONArray jsonArray = jsonObject.getJSONArray("logs");
-                        List<DayLog> daylogs = new ArrayList<>();
+                        List<Entry> intakeEntry = new ArrayList<>();
+                        List<Entry> burnEntry = new ArrayList<>();
+                        List<Entry> allEntry = new ArrayList<>();
+                        JSONObject temp;
+                        String logDate;
+                        double intake, burn, all;
 
                         for(int i=0;i<jsonArray.length();i++){
-                            JSONObject temp = jsonArray.getJSONObject(i);
+                            temp = jsonArray.getJSONObject(i);
 
-                            String logDate = temp.getString("logDate");     // 해당 데이터의 날짜
-                            double intake = temp.getDouble("intake");       // 당일 칼로리 섭취량
-                            double burn = temp.getDouble("burn");           // 당일 칼로리 소모량
-                            double dayCalorie = temp.getDouble("dayCalorie");// 당일 총 칼로리
+                            logDate = temp.getString("logDate");     // 해당 데이터의 날짜
+                            intake = temp.getDouble("intake");       // 당일 칼로리 섭취량
+                            burn = temp.getDouble("burn");           // 당일 칼로리 소모량
+                            all = temp.getDouble("dayCalorie");// 당일 총 칼로리
 
-                            daylogs.add(new DayLog(logDate,intake,burn,dayCalorie));
+                            intakeEntry.add(new Entry(i, (float) intake));
+                            burnEntry.add(new Entry(i, (float) burn));
+                            allEntry.add(new Entry(i, (float) all));
                         }
-                        
-                        jsonArray = jsonObject.getJSONArray("bodyData");
-                        List<BodyData> bodyData = new ArrayList<>();
-                        for(int i=0;i<jsonArray.length();i++){
-                            JSONObject temp = jsonArray.getJSONObject(i);
+                        createLine(intakeEntry,"섭취 칼로리", R.color.intake);
+                        createLine(burnEntry, "소모 칼로리", R.color.burn);
+                        createLine(allEntry, "총 칼로리", R.color.black);
 
-                            String logDate = temp.getString("logDate");     // 해당 데이터의 날짜
-                            double height = temp.getDouble("height");       // 당일 키
-                            double weight = temp.getDouble("weight");       // 당일 체중
-                            double BMR = temp.getDouble("BMR");             // 당일 BMR (기초대사량)
+                        XAxis xAxis = lineChart.getXAxis();
 
-                            bodyData.add(new BodyData(logDate,height,weight,BMR));
-                        }
-                        
-                        // daylogs 일별 로그
-                        // bodyData 일별 바디데이터
-                        // log 가져온걸로 차트 데이터 입력
+                        lineChart.setDescription(null);
 
 
-                        // 주, 월, 년, 기간선택
-                        // 그래프1
-                        // 총 칼로리, 섭취칼로리, 소모칼로리 한 그래프안에서 (밑에 체크박스 통해 보이는거 선택가능하게)
-                        //
-                        // 그래프2
-                        // 키 체중 BMR 그래프 위와 마찬가지
-                        //
-                        //
-
-
-
-
+                        lineChart.invalidate();
 
                     } else {
                         Toast.makeText(getActivity(),jsonObject.toString(),Toast.LENGTH_LONG).show();
@@ -154,72 +263,17 @@ public class GraphFragment extends Fragment {
                 }
             }
         };
-        AtoBDaylogsRequest atobdaylogsRequest = new AtoBDaylogsRequest(userID, "","", responseListener);
+        AtoBDaylogsRequest atobdaylogsRequest = new AtoBDaylogsRequest(userID, dateBegin, dateEnd, responseListener);
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         queue.add(atobdaylogsRequest);
-
-
-
-        lineChart = v.findViewById(R.id.chart);
-
-        //데이터 입력, db에서 데이터 입력받는 값으로 y값 수정해야함
-        List<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(1, 1));
-        entries.add(new Entry(2, 2));
-        entries.add(new Entry(3, 0));
-        entries.add(new Entry(4, 4));
-        entries.add(new Entry(5, 3));
-        entries.add(new Entry(6, 12));
-        entries.add(new Entry(7, 11));
-        entries.add(new Entry(8, 9));
-        entries.add(new Entry(9, 7));
-        entries.add(new Entry(10, 4));
-        entries.add(new Entry(11, 8));
-        entries.add(new Entry(12, 6));
-
-        //입력 데이터 삽입 및 그래프 다자인
-        LineDataSet lineDataSet = new LineDataSet(entries, "일 평균 칼로리");
-        lineDataSet.setLineWidth(2);
-        lineDataSet.setCircleRadius(4);
-        lineDataSet.setCircleColor(Color.BLACK);
-        lineDataSet.setColor(Color.GREEN);
-        lineDataSet.setDrawCircles(true);
-        lineDataSet.setValueTextSize(13);
-
-
-        LineData lineData = new LineData(lineDataSet);
-        lineChart.setData(lineData);
-
-        //x축 디자인
-        XAxis xAxis = lineChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setTextColor(Color.BLACK);
-        xAxis.setDrawAxisLine(true);
-        xAxis.setDrawGridLines(false);
-        xAxis.setLabelCount(12,true);
-
-        //y축 왼쪽 디자인 및 설정
-        YAxis yLAxis = lineChart.getAxisLeft();
-        yLAxis.setDrawAxisLine(true);
-        yLAxis.setDrawGridLines(false);
-        yLAxis.setDrawLabels(false);
-
-        //y축 오른쪽 디자인 및 설정
-        YAxis yRAxis = lineChart.getAxisRight();
-        yRAxis.setDrawLabels(false);
-        yRAxis.setDrawAxisLine(false);
-        yRAxis.setDrawGridLines(false);
-
-        //description 부분 디자인 및 설정
-        Description description = new Description();
-        description.setText("x : 월, y : 평균 칼로리");
-        description.setTextSize(8);
-
-        lineChart.setDoubleTapToZoomEnabled(false);
-        lineChart.setDrawGridBackground(false);
-        lineChart.setDescription(description);
-        lineChart.invalidate();
-
-        return v;
+    }
+    private String getDay(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(date);
+    }
+    private String getToday(){
+        long now = System.currentTimeMillis();
+        Date date = new Date(now);
+        return getDay(date);
     }
 }

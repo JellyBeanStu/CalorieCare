@@ -53,7 +53,7 @@ import java.util.GregorianCalendar;
 public class ProfileFragment extends Fragment {
 
     private User myData;
-    private double height, weight, age;
+    private double height, weight;
     private String birth;
 
     ImageView img_profile;
@@ -108,7 +108,6 @@ public class ProfileFragment extends Fragment {
 
         height = myData.getHeight();
         weight = myData.getWeight();
-        age = myData.getAge();
         birth = myData.getBirth();
 
         text_name.addTextChangedListener(new TextWatcher() {
@@ -142,7 +141,6 @@ public class ProfileFragment extends Fragment {
 
                         birth = date;
                         text_birth.setText(birth);
-                        setAge(birth);
 
                         if(birth.equals(myData.getBirth())){
                             setBlink(false);
@@ -342,22 +340,6 @@ public class ProfileFragment extends Fragment {
         });
 
         return v;
-    }
-    public void setAge(String birth){
-        Calendar calendar = new GregorianCalendar();
-        int mYear = calendar.get(Calendar.YEAR);
-        int mMonth = calendar.get(Calendar.MONTH);
-        int mDay = calendar.get(Calendar.DAY_OF_MONTH);
-
-        int userYear = Integer.parseInt(birth.substring(0,4));
-        int userMonth = Integer.parseInt(birth.substring(5,7));
-        int userDay = Integer.parseInt(birth.substring(8,10));
-
-        int age = mYear-userYear-1;
-        if(mMonth > userMonth || (mMonth == userMonth && mDay>userDay)){
-            age++;
-        }
-        this.age =  age;
     }
     public void setBlink(boolean flag){
         blink = flag;

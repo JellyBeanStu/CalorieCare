@@ -9,13 +9,13 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,13 +28,19 @@ import com.example.caloriecare.MainActivity;
 import com.example.caloriecare.R;
 
 import com.example.caloriecare.graph.DateRangeFragment;
+import com.example.caloriecare.graph.GraphAxisValueFormatter;
+import com.example.caloriecare.graph.LineChartXAxisValueFormatter;
 import com.example.caloriecare.graph.NDSpinner;
 import com.example.caloriecare.ranking.SpinnerAdapter;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,7 +62,12 @@ public class GraphFragment extends Fragment {
     private LineChart lineChart;
     private ArrayAdapter<String> typeAdapter;
     private TextView tv_begin, tv_end;
+    CheckBox allck, burnck, intakeck;
+    boolean all =true, burn=true, intake=true;
+    List<String> days = new ArrayList<>();
+
     LineData chartData = new LineData();
+    List<LineDataSet> lineDataSet = new ArrayList<>(3);  //0all 1burn 2intake
 
     private String dateBegin="2021-05-24", dateEnd="2021-05-30";
 
@@ -84,21 +95,63 @@ public class GraphFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_graph, container, false);
         lineChart = v.findViewById(R.id.chart);
+        tv_begin = (TextView)v.findViewById(R.id.beginDate);
+        tv_end = (TextView)v.findViewById(R.id.endDate);
 
         Button btnGraph = v.findViewById(R.id.button5);
         Button btnCalendar = v.findViewById(R.id.button6);
-        tv_begin = (TextView)v.findViewById(R.id.beginDate);
-        tv_end = (TextView)v.findViewById(R.id.endDate);
-    //    Spinner sptype = v.findViewById(R.id.spinner);
+        CheckBox allck = (CheckBox)v.findViewById(R.id.checkBoxAll);
+        CheckBox burnck = (CheckBox)v.findViewById(R.id.checkBoxBurn);
+        CheckBox intakeck = (CheckBox)v.findViewById(R.id.checkBoxIntake);
         NDSpinner sptype = new NDSpinner(getContext());
-        sptype.setTextAlignment(TEXT_ALIGNMENT_CENTER);
-        
-        ((LinearLayout)v.findViewById(R.id.graph_inner_layout)).addView(sptype);
 
-        btnCalendar.setBackgroundColor(Color.parseColor("#FFEB3B"));
-        btnCalendar.setEnabled(true);
-        btnGraph.setBackgroundColor(Color.WHITE);
-        btnGraph.setEnabled(false);
+        allck.setChecked(true);
+        burnck.setChecked(true);
+        intakeck.setChecked(true);
+
+        lineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener(){
+            @Override
+            public void onValueSelected(Entry e, Highlight h)
+            {
+                float x=e.getX();
+                float y=e.getY();
+
+                Toast.makeText(getActivity(),days.get((int) x)+Float.toString(y),Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected()
+            {
+
+            }
+        });
+
+        allck.setOnClickListener(new CheckBox.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                all = allck.isChecked();
+               updateChart();
+            }
+        });
+        burnck.setOnClickListener(new CheckBox.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                burn = burnck.isChecked();
+                updateChart();
+            }
+        });
+        intakeck.setOnClickListener(new CheckBox.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intake = intakeck.isChecked();
+                updateChart();
+            }
+        });
+
+        sptype.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 150);
+        sptype.setLayoutParams(layoutParams);
+        ((LinearLayout)v.findViewById(R.id.graph_inner_layout)).addView(sptype);
 
         btnCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,6 +161,10 @@ public class GraphFragment extends Fragment {
                 transaction.replace(R.id.main_layout, calendarFragment).commitAllowingStateLoss();
             }
         });
+        btnCalendar.setBackgroundColor(Color.parseColor("#FFEB3B"));
+        btnCalendar.setEnabled(true);
+        btnGraph.setBackgroundColor(Color.WHITE);
+        btnGraph.setEnabled(false);
 
         typeAdapter = new SpinnerAdapter(v.getContext(),android.R.layout.simple_spinner_dropdown_item, itemType);
         sptype.setAdapter(typeAdapter);
@@ -141,16 +198,6 @@ public class GraphFragment extends Fragment {
         });
 
         return v;
-    }
-    public String dayafter(String date) throws ParseException {
-        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date to = transFormat.parse(date);
-
-        Calendar day = Calendar.getInstance();
-        day.setTime(to);
-        day.add(Calendar.DATE , 1);
-        String beforeDate = new java.text.SimpleDateFormat("yyyy-MM-dd").format(day.getTime());
-        return beforeDate;
     }
     public void getThisWeek(){
         Calendar c = Calendar.getInstance();
@@ -194,24 +241,38 @@ public class GraphFragment extends Fragment {
         AtoB.show(getParentFragmentManager(), "addDateRangeDialog");
     }
 
-
     //x date, y value
-    public void createLine(List<Entry> entries, String labelName, int color){
-        LineDataSet lineDataSet = new LineDataSet(entries, labelName);
-        lineDataSet.setColor(ContextCompat.getColor(getContext(), color));
+    public void createLine(List<Entry> entries, String labelName, int index, int color){
+        if(lineDataSet.size() != 3)
+            lineDataSet.add(new LineDataSet(entries, labelName));
+        else lineDataSet.set(index, new LineDataSet(entries, labelName));
 
-        lineDataSet.setValueTextSize(30); //값 텍스트 크기
-        lineDataSet.setLineWidth(3); //줄 두께
-        lineDataSet.setFillAlpha(90); //투명도 채우기 65
-        lineDataSet.setCircleRadius(5f); //데이터점 반지름 5f로
-        lineDataSet.setCircleColor(ContextCompat.getColor(getContext(), color));
+        lineDataSet.get(index).setColor(ContextCompat.getColor(getContext(), color));
 
-        chartData.addDataSet(lineDataSet);
-        chartData.setValueTextColor(ContextCompat.getColor(getContext(), color));
-        chartData.setValueTextSize(9);
+        lineDataSet.get(index).setLineWidth(2); //줄 두께
+        lineDataSet.get(index).setFillAlpha(75); //투명도 채우기 65
+        lineDataSet.get(index).setCircleRadius(4f); //데이터점 반지름 5f로
+        lineDataSet.get(index).setCircleColor(ContextCompat.getColor(getContext(), color));
 
-        lineChart.setData(chartData);
+    }
+    public void updateChart(){
+        chartData = new LineData();
+        if(all){
+            chartData.addDataSet(lineDataSet.get(0));
+            lineChart.setData(chartData);
+        }
+        if(burn){
+            chartData.addDataSet(lineDataSet.get(1));
+            lineChart.setData(chartData);
+        }
+        if(intake){
+            chartData.addDataSet(lineDataSet.get(2));
+            lineChart.setData(chartData);
+        }
+        if(!all && !burn && !intake)
+            lineChart.clearValues();
 
+        lineChart.invalidate();
     }
     public void createChart() {
         Response.Listener<String> responseListener = new Response.Listener<String>() {
@@ -220,16 +281,16 @@ public class GraphFragment extends Fragment {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     boolean success = jsonObject.getBoolean("success");
-
+                    List<Entry> intakeEntry = new ArrayList<>();
+                    List<Entry> burnEntry = new ArrayList<>();
+                    List<Entry> allEntry = new ArrayList<>();
                     if (success) {
                         JSONArray jsonArray = jsonObject.getJSONArray("logs");
-                        List<Entry> intakeEntry = new ArrayList<>();
-                        List<Entry> burnEntry = new ArrayList<>();
-                        List<Entry> allEntry = new ArrayList<>();
+
                         JSONObject temp;
                         String logDate;
                         double intake, burn, all;
-
+                        long day;
                         for(int i=0;i<jsonArray.length();i++){
                             temp = jsonArray.getJSONObject(i);
 
@@ -238,19 +299,33 @@ public class GraphFragment extends Fragment {
                             burn = temp.getDouble("burn");           // 당일 칼로리 소모량
                             all = temp.getDouble("dayCalorie");// 당일 총 칼로리
 
+                            days.add(logDate);
+
                             intakeEntry.add(new Entry(i, (float) intake));
                             burnEntry.add(new Entry(i, (float) burn));
                             allEntry.add(new Entry(i, (float) all));
                         }
-                        createLine(intakeEntry,"섭취 칼로리", R.color.intake);
-                        createLine(burnEntry, "소모 칼로리", R.color.burn);
-                        createLine(allEntry, "총 칼로리", R.color.black);
 
-                        XAxis xAxis = lineChart.getXAxis();
+                        createLine(allEntry, "총 칼로리",0, R.color.black);
+                        createLine(burnEntry, "소모 칼로리",1, R.color.burn);
+                        createLine(intakeEntry,"섭취 칼로리",2, R.color.intake);
+
+                        updateChart();
+
+                        chartData.setValueTextSize(0);
+
+                        XAxis xAxis = lineChart.getXAxis(); // x 축 설정
+                        xAxis.setEnabled(false);
+                        YAxis yAxisRight = lineChart.getAxisRight(); //Y축의 오른쪽면 설정
+                        yAxisRight.setDrawLabels(false);
+                        yAxisRight.setDrawAxisLine(false);
+                        yAxisRight.setDrawGridLines(false);
+                        //y축의 활성화를 제거함
+
+                        Legend legend = lineChart.getLegend();
+                        legend.setEnabled(false);
 
                         lineChart.setDescription(null);
-
-
                         lineChart.invalidate();
 
                     } else {
@@ -267,13 +342,9 @@ public class GraphFragment extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         queue.add(atobdaylogsRequest);
     }
+
     private String getDay(Date date){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(date);
-    }
-    private String getToday(){
-        long now = System.currentTimeMillis();
-        Date date = new Date(now);
-        return getDay(date);
     }
 }

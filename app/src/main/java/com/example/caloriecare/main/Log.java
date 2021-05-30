@@ -1,17 +1,22 @@
 package com.example.caloriecare.main;
 
 public class Log {
-    String type, code;
+    String id, type, code;
     double volume, calorie;
 
     public Log(){
 
     }
-    public Log(String type, String code, double volume, double calorie){
+    public Log(String id, String type, String code, double volume, double calorie){
+        this.id = id;
         this.type = type;
         this.code = code;
         this.volume = volume;
         this.calorie = calorie;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public double getCalorie() {

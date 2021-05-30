@@ -1,35 +1,52 @@
 package com.example.caloriecare.main;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.example.caloriecare.DBrequest.deleteLogRequest;
 import com.example.caloriecare.DBrequest.getLogsRequest;
+import com.example.caloriecare.DBrequest.getUserDataRequest;
 import com.example.caloriecare.DBrequest.setLogRequest;
 import com.example.caloriecare.MainActivity;
 import com.example.caloriecare.R;
+import com.example.caloriecare.User;
+import com.example.caloriecare.fragment.CalendarFragment;
+import com.example.caloriecare.fragment.MainFragment;
+import com.example.caloriecare.fragment.ProfileFragment;
+import com.example.caloriecare.fragment.RankingFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,7 +56,13 @@ import java.util.List;
 
 public class ReceiptFragment extends DialogFragment {
 
+    private ReceiptFragment.OutputListener listener;
+    public interface OutputListener { void onSaveComplete(double burn ,double intake); }
+
     String userID;
+    User myData;
+    double burnSum, intakeSum, calorieSum;
+    TextView BurnSum, IntakeSum, CalorieSum;
 
     private HashMap<String, DietData> AllDietData;
     private HashMap<String, ExerciseData> AllExerciseData;
@@ -50,9 +73,10 @@ public class ReceiptFragment extends DialogFragment {
         // Required empty public constructor
     }
 
-    public static ReceiptFragment newInstance(String userID) {
+    public static ReceiptFragment newInstance(String userID, OutputListener listener) {
         ReceiptFragment fragment = new ReceiptFragment();
         fragment.userID = userID;
+        fragment.listener = listener;
         return fragment;
     }
 
@@ -68,15 +92,17 @@ public class ReceiptFragment extends DialogFragment {
 
         AllDietData = ((MainActivity)getActivity()).getDietCategory().getAllFoodCategory();
         AllExerciseData = ((MainActivity)getActivity()).getExerciseCategory().getAllExerciseCategory();
-        logs = new ArrayList<>();
 
-        Button btnBack = (Button)v.findViewById(R.id.receipt_back);
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismiss();
-            }
-        });
+        BurnSum = (TextView)v.findViewById(R.id.BurnSum);
+        IntakeSum = (TextView)v.findViewById(R.id.IntakeSum);
+        CalorieSum = (TextView)v.findViewById(R.id.CalorieSum);
+
+        myData =  ((MainActivity)getActivity()).getMyData();
+        burnSum = myData.getBurn();
+        intakeSum = myData.getIntake();
+        calorieSum = myData.getDayCalorie();
+
+        setSumText();
 
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
@@ -86,15 +112,34 @@ public class ReceiptFragment extends DialogFragment {
                     boolean success = jsonObject.getBoolean("success");
                     if (success) {
                         JSONArray jsonArray = jsonObject.getJSONArray("logs");
+                        JSONObject temp;
+
+                        String name="", type="", code="", unit="", logid="";
+                        double volume=0, calorie=0;
+                        boolean flag = true;
+                        LinearLayout layout= new LinearLayout(getContext());
 
                         for(int i=0;i<jsonArray.length();i++){
-                            JSONObject temp = jsonArray.getJSONObject(i);
-                            String type = temp.getString("type");
-                            String code = temp.getString("code");
-                            double volume = temp.getDouble("volume");
-                            double calorie = temp.getDouble("calorie");
+                            temp = jsonArray.getJSONObject(i);
+                            logid = temp.getString("logID");
+                            type = temp.getString("type");
+                            code = temp.getString("code");
+                            volume = temp.getDouble("volume");
+                            calorie = temp.getDouble("calorie");
 
-                            logs.add(new Log(type,code,volume, calorie));
+                            if(type.equals("DIET")) {
+                                layout = (LinearLayout)v.findViewById(R.id.intakeLog);
+                                name = AllDietData.get(code).getName();
+                                unit = AllDietData.get(code).getUnit();
+                                flag = true;
+                            }
+                            else if(type.equals("EXERCISE")){
+                                layout = (LinearLayout)v.findViewById(R.id.burnLog);
+                                name = AllExerciseData.get(code).getName();
+                                unit = "분";
+                                flag = false;
+                            }
+                            makeLogs(layout, name, logid, volume, unit, flag, calorie);
                         }
 
                     } else {
@@ -105,24 +150,6 @@ public class ReceiptFragment extends DialogFragment {
                     Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
-                // 동적 생성
-                 for(int i=0;i<logs.size();i++){
-                     String type = logs.get(i).getType();
-                     String code = logs.get(i).getCode();
-                     Data data = new Data();
-                     //parent
-                     if(type.equals("DIET")) {
-                         data = AllDietData.get(code);
-                         //parent = intake
-                     }
-                     else if(type.equals("EXERCISE")){
-                         data = AllExerciseData.get(code);
-                         //parent = burn
-                     }
-                     data.getName();
-                     data.getCalorie();
-                     data.getUnit();
-                 }
             }
         };
         getLogsRequest daylogRequest = new getLogsRequest(userID, getToday(), responseListener);
@@ -139,5 +166,103 @@ public class ReceiptFragment extends DialogFragment {
         long now = System.currentTimeMillis();
         Date date = new Date(now);
         return getDay(date);
+    }
+    private void makeLogs(LinearLayout linear, String name, String logid, double volume, String unit, boolean type, double calorie){
+        LinearLayout covered = new LinearLayout(getContext());
+        TextView nameText = new TextView(getContext());
+        TextView volumeText = new TextView(getContext());
+        TextView calorieText = new TextView(getContext());
+        ImageView delete = new ImageView(getContext());
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.topMargin = 30;
+        covered.setLayoutParams(layoutParams);
+        covered.setGravity(Gravity.CENTER);
+
+        nameText.setText(name);
+        volumeText.setText(Integer.toString((int)volume)+unit);
+        calorieText.setText(String.format("%.1f", calorie) + " Kcal");
+        delete.setImageResource(R.drawable.close);
+
+        layoutParams = new LinearLayout.LayoutParams(250, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.leftMargin = 10;
+        nameText.setLayoutParams(layoutParams);
+        nameText.setTextColor(Color.BLACK);
+        nameText.setTextSize(17);
+        nameText.setTypeface(Typeface.createFromAsset(getActivity().getAssets(),"bmjua.ttf"));
+
+        layoutParams = new LinearLayout.LayoutParams(100, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.leftMargin = 10;
+        volumeText.setLayoutParams(layoutParams);
+        volumeText.setTextSize(14);
+        volumeText.setTypeface(Typeface.createFromAsset(getActivity().getAssets(),"bmjua.ttf"));
+
+        layoutParams = new LinearLayout.LayoutParams(240, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.leftMargin = 10;
+        calorieText.setLayoutParams(layoutParams);
+        calorieText.setTextColor(Color.BLACK);
+        calorieText.setTextSize(17);
+        calorieText.setTypeface(Typeface.createFromAsset(getActivity().getAssets(),"bmjua.ttf"));
+
+        layoutParams = new LinearLayout.LayoutParams(35,35);
+        delete.setLayoutParams(layoutParams);  // imageView layout 설정
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Response.Listener<String> responseListener = new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean success = jsonObject.getBoolean("success");
+                            if (success) {
+                                if(type){
+                                    intakeSum -= calorie;
+                                }
+                                else{
+                                    burnSum -= calorie;
+                                }
+                                calorieSum = intakeSum - burnSum;
+                                setSumText();
+
+                                linear.removeView(covered);
+                                listener.onSaveComplete(burnSum, intakeSum);
+                                Toast.makeText(getActivity(),"삭제 완료!",Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(getActivity(),jsonObject.toString(),Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        } catch (JSONException e) {
+                            Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_LONG).show();
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                deleteLogRequest deletelog = new deleteLogRequest(logid, responseListener);
+                RequestQueue queue = Volley.newRequestQueue(getActivity());
+                queue.add(deletelog);
+            }
+        });
+
+        covered.addView(nameText);
+        covered.addView(volumeText);
+        covered.addView(calorieText);
+        covered.addView(delete);
+
+        linear.addView(covered);
+
+    }
+    private void setSumText(){
+        BurnSum.setText(String.format("%.1f",burnSum) + " Kcal");
+        IntakeSum.setText(String.format("%.1f",intakeSum) + " Kcal");
+        CalorieSum.setText(String.format("%.1f",calorieSum) + " Kcal");
+
+        if(calorieSum < 0)
+            CalorieSum.setTextColor(getResources().getColor(R.color.burn));
+        else if(calorieSum > 0)
+            CalorieSum.setTextColor(getResources().getColor(R.color.intake));
+        else{
+            CalorieSum.setTextColor(Color.BLACK);
+        }
     }
 }

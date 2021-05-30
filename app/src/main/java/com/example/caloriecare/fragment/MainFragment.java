@@ -96,16 +96,27 @@ public class MainFragment extends Fragment {
         receipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ReceiptFragment dialog = ReceiptFragment.newInstance(myData.getID());
-                dialog.show(getParentFragmentManager(), "addReceiptDialog");
+                ReceiptFragment dialog = ReceiptFragment.newInstance(myData.getID(), new ReceiptFragment.OutputListener() {
+                    @Override
+                    public void onSaveComplete(double burn, double intake) {
+                        myData = ((MainActivity)getActivity()).getMyData();
+                        myData.setBurn(burn);
+                        myData.setIntake(intake);
+                        myData.setDayCalorie(intake-burn);
+                        ((MainActivity)getActivity()).setMyData(myData);
 
+                        dietText.setText(String.format("%.1f",myData.getIntake())+ " Kcal");
+                        exerciseText.setText(String.format("%.1f",myData.getBurn())+ " Kcal");
+                        setReceiptCalorie();
+                    }
+                });
+                dialog.show(getParentFragmentManager(), "addReceiptDialog");
             }
         });
 
         dietText.setText(String.format("%.1f",myData.getIntake())+ " Kcal");
         exerciseText.setText(String.format("%.1f",myData.getBurn())+ " Kcal");
         setReceiptCalorie();
-
 
         BMRText.setText(String.format("%.1f",calculateBMR())+" Kcal");
         RecommendedText.setText(String.format("%.1f",calculateRecommendedCalorie())+" Kcal");

@@ -9,6 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="yellow">#FFFFEB3B</color>
     <color name="white_200">#FFFAFAFA</color>
-    <color name="intake">#b71540</color>
-    <color name="burn">#0c2461</color>
+    <color name="intake">#0c2461</color>
+    <color name="burn">#b71540</color>
 </resources>

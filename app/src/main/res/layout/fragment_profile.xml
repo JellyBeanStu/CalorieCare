@@ -86,6 +86,7 @@
             android:id="@+id/layout_birth"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -121,7 +122,7 @@
             android:id="@+id/layout_height"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -201,12 +202,6 @@
                 tools:layout_editor_absoluteY="229dp" />
 
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_bmr"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"/>
 
         <Button
             android:id="@+id/btn_save"

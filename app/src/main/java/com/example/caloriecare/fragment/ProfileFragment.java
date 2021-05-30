@@ -110,15 +110,14 @@ public class ProfileFragment extends Fragment {
         weight = myData.getWeight();
         birth = myData.getBirth();
 
+
         text_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable edit) {
                 if(edit.toString().equals(myData.getName())) {
-                    blink = false;
-                    btn_save.clearAnimation();
+                    setBlink(false);
                 }else if(!blink){
-                    blink = true;
-                    btn_save.startAnimation(startAnimation);
+                    setBlink(true);
                 }
             }
             @Override
@@ -160,8 +159,11 @@ public class ProfileFragment extends Fragment {
                 else str = edit.toString();
 
                 height = Double.parseDouble(str);
+                height = Math.round(height*10)/10.0;
+                int tempA = (int) Math.round(height*10);
+                int tempB = (int) Math.round(myData.getHeight()*10);
 
-                if(myData.getHeight() == height){
+                if(tempA == tempB){
                     setBlink(false);
                 }else if(!blink){
                     setBlink(true);
@@ -172,7 +174,6 @@ public class ProfileFragment extends Fragment {
             }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
         });
         text_weight.addTextChangedListener(new TextWatcher() {
@@ -181,9 +182,14 @@ public class ProfileFragment extends Fragment {
                 String str;
                 if(edit.length() == 0) str="0";
                 else str = edit.toString();
-                weight = Double.parseDouble(str);
 
-                if(myData.getWeight() == weight){
+                weight = Double.parseDouble(str);
+                weight = Math.round(weight*10)/10.0;
+
+                int tempA = (int) Math.round(weight*10);
+                int tempB = (int) Math.round(myData.getWeight()*10);
+
+                if(tempA == tempB){
                     setBlink(false);
                 }else if(!blink){
                     setBlink(true);

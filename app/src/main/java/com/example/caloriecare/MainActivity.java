@@ -45,6 +45,16 @@ public class MainActivity extends AppCompatActivity {
     }
     public DietCategory getDietCategory(){return this.dietCategory;}
     public ExerciseCategory getExerciseCategory(){return this.exerciseCategory;}
+    public void setBurn(double calorie){
+        myData.setBurn(calorie);
+    }
+    public void setIntake(double calorie){
+        myData.setIntake(calorie);
+    }
+    public void setDayCalorie(double calorie){
+        myData.setIntake(calorie);
+    }
+
 
     public FragmentManager getfragmentManager(){return this.fragmentManager;}
 

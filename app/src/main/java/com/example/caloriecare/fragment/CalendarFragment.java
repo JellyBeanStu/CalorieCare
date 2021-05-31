@@ -28,6 +28,7 @@ import com.example.caloriecare.calendar.SundayDecorator;
 import com.example.caloriecare.calendar.TextDecorator;
 import com.example.caloriecare.main.DietData;
 import com.example.caloriecare.main.ExerciseData;
+import com.example.caloriecare.main.ReceiptFragment;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
@@ -152,52 +153,13 @@ public class CalendarFragment extends Fragment {
         materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(MaterialCalendarView widget, CalendarDay date, boolean selected) {
-                Response.Listener<String> responseListener = new Response.Listener<String>() {
+                ReceiptFragment dialog = ReceiptFragment.newInstance(userID, getDay(date.getDate()), false, new ReceiptFragment.OutputListener() {
                     @Override
-                    public void onResponse(String response) {
-                        try {
-                            AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
-                            ad.setIcon(R.mipmap.ic_logo);
-                            ad.setTitle(getDay(date.getDate()));
-
-                            JSONObject jsonObject = new JSONObject(response);
-                            boolean success = jsonObject.getBoolean("success");
-
-                            if (success) {
-                                JSONArray jsonArray = jsonObject.getJSONArray("logs");
-                                ad.setMessage(jsonArray.toString());
-//                                for(int i=0;i<jsonArray.length();i++){
-//                                    JSONObject temp = jsonArray.getJSONObject(i);
-//                                    long logID = temp.getLong("logID");
-//                                    int type = temp.getInt("type");
-//                                    String code = temp.getString("code");
-//                                    double volume = temp.getDouble("volume");
-//                                    double calorie = temp.getDouble("calorie");
-//                                }
-
-                            } else {
-                                Toast.makeText(getActivity(),jsonObject.toString(),Toast.LENGTH_LONG).show();
-                                return;
-                            }
-
-                            ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                            ad.show();
-                            materialCalendarView.clearSelection();
-
-                        } catch (JSONException e) {
-                            Toast.makeText(getActivity(),e.toString(),Toast.LENGTH_LONG).show();
-                            e.printStackTrace();
-                        }
+                    public void onSaveComplete(double burn, double intake) {
+                       
                     }
-                };
-                getLogsRequest daylogRequest = new getLogsRequest(userID, getDay(date.getDate()), responseListener);
-                RequestQueue queue = Volley.newRequestQueue(getActivity());
-                queue.add(daylogRequest);
+                });
+                dialog.show(getParentFragmentManager(), "addReceiptDialog");
             }
 
         });

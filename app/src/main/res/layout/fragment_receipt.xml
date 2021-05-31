@@ -20,8 +20,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingLeft="30dp"
-                android:paddingRight="30dp">
+                android:paddingLeft="20dp"
+                android:paddingRight="25dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -34,8 +34,10 @@
 
                     <TextView
                         android:id="@+id/textView3"
-                        android:layout_width="50dp"
+                        android:layout_width="65dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
                         android:layout_weight="1"
                         android:fontFamily="@font/bmjua"
                         android:text="Burn"
@@ -46,8 +48,8 @@
                         android:id="@+id/BurnSum"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="30dp"
-                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginLeft="20dp"
                         android:layout_weight="1"
                         android:fontFamily="@font/bmjua"
                         android:text="1000 Kcal"
@@ -74,8 +76,10 @@
 
                     <TextView
                         android:id="@+id/textView6"
-                        android:layout_width="50dp"
+                        android:layout_width="65dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
                         android:layout_weight="1"
                         android:fontFamily="@font/bmjua"
                         android:text="Intake"
@@ -86,8 +90,8 @@
                         android:id="@+id/IntakeSum"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="30dp"
-                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginLeft="20dp"
                         android:layout_weight="1"
                         android:fontFamily="@font/bmjua"
                         android:text="1000 Kcal"
@@ -115,6 +119,8 @@
                         android:id="@+id/textView8"
                         android:layout_width="80dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginLeft="5dp"
                         android:layout_weight="1"
                         android:fontFamily="@font/bmjua"
                         android:text="총 칼로리"

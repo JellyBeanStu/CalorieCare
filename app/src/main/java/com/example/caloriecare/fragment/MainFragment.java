@@ -17,6 +17,7 @@ import com.example.caloriecare.User;
 import com.example.caloriecare.main.DietFragment;
 import com.example.caloriecare.main.ExerciseFragment;
 import com.example.caloriecare.main.ReceiptFragment;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -96,7 +97,7 @@ public class MainFragment extends Fragment {
         receipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ReceiptFragment dialog = ReceiptFragment.newInstance(myData.getID(), new ReceiptFragment.OutputListener() {
+                ReceiptFragment dialog = ReceiptFragment.newInstance(myData.getID(), getToday(), true, new ReceiptFragment.OutputListener() {
                     @Override
                     public void onSaveComplete(double burn, double intake) {
                         myData = ((MainActivity)getActivity()).getMyData();

@@ -31,6 +31,7 @@ import com.example.caloriecare.graph.DateRangeFragment;
 import com.example.caloriecare.graph.GraphAxisValueFormatter;
 import com.example.caloriecare.graph.LineChartXAxisValueFormatter;
 import com.example.caloriecare.graph.NDSpinner;
+import com.example.caloriecare.main.ReceiptFragment;
 import com.example.caloriecare.ranking.SpinnerAdapter;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -41,6 +42,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -110,13 +112,20 @@ public class GraphFragment extends Fragment {
         intakeck.setChecked(true);
 
         lineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener(){
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onValueSelected(Entry e, Highlight h)
             {
                 float x=e.getX();
-                float y=e.getY();
+                ReceiptFragment dialog = ReceiptFragment.newInstance(userID, days.get((int) x), false, new ReceiptFragment.OutputListener() {
+                    @Override
+                    public void onSaveComplete(double burn, double intake) {
 
-                Toast.makeText(getActivity(),days.get((int) x)+Float.toString(y),Toast.LENGTH_SHORT).show();
+                    }
+                });
+                dialog.show(getParentFragmentManager(), "addReceiptDialog");
+
+
             }
 
             @Override

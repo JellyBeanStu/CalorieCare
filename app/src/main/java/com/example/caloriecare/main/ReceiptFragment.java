@@ -104,6 +104,7 @@ public class ReceiptFragment extends DialogFragment {
         BurnSum = (TextView)v.findViewById(R.id.BurnSum);
         IntakeSum = (TextView)v.findViewById(R.id.IntakeSum);
         CalorieSum = (TextView)v.findViewById(R.id.CalorieSum);
+        ((TextView)v.findViewById(R.id.date)).setText(date.substring(5));
 
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override

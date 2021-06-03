@@ -3,6 +3,7 @@ package com.example.caloriecare.main;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -42,6 +44,7 @@ import com.example.caloriecare.fragment.MainFragment;
 import com.example.caloriecare.fragment.ProfileFragment;
 import com.example.caloriecare.fragment.RankingFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,7 +63,9 @@ public class ReceiptFragment extends DialogFragment {
     public interface OutputListener { void onSaveComplete(double burn ,double intake); }
 
     String userID;
-    User myData;
+    String date;
+    boolean canDelete;
+
     double burnSum, intakeSum, calorieSum;
     TextView BurnSum, IntakeSum, CalorieSum;
 
@@ -73,9 +78,12 @@ public class ReceiptFragment extends DialogFragment {
         // Required empty public constructor
     }
 
-    public static ReceiptFragment newInstance(String userID, OutputListener listener) {
+    public static ReceiptFragment newInstance(String userID, String date, boolean canDelete, OutputListener listener) {
         ReceiptFragment fragment = new ReceiptFragment();
         fragment.userID = userID;
+        fragment.date = date;
+        fragment.canDelete = canDelete;
+
         fragment.listener = listener;
         return fragment;
     }
@@ -96,13 +104,7 @@ public class ReceiptFragment extends DialogFragment {
         BurnSum = (TextView)v.findViewById(R.id.BurnSum);
         IntakeSum = (TextView)v.findViewById(R.id.IntakeSum);
         CalorieSum = (TextView)v.findViewById(R.id.CalorieSum);
-
-        myData =  ((MainActivity)getActivity()).getMyData();
-        burnSum = myData.getBurn();
-        intakeSum = myData.getIntake();
-        calorieSum = myData.getDayCalorie();
-
-        setSumText();
+        ((TextView)v.findViewById(R.id.date)).setText(date.substring(5));
 
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
@@ -119,6 +121,11 @@ public class ReceiptFragment extends DialogFragment {
                         boolean flag = true;
                         LinearLayout layout= new LinearLayout(getContext());
 
+                        burnSum = jsonObject.getDouble("burn");
+                        intakeSum = jsonObject.getDouble("intake");
+                        calorieSum = intakeSum - burnSum;
+                        setSumText();
+
                         for(int i=0;i<jsonArray.length();i++){
                             temp = jsonArray.getJSONObject(i);
                             logid = temp.getString("logID");
@@ -128,15 +135,24 @@ public class ReceiptFragment extends DialogFragment {
                             calorie = temp.getDouble("calorie");
 
                             if(type.equals("DIET")) {
+                                if(!AllDietData.containsKey(code)){
+                                    name = "WRONG CODE";
+                                    unit = "g";
+                                }else{
+                                    name = AllDietData.get(code).getName();
+                                    unit = AllDietData.get(code).getUnit();
+                                }
                                 layout = (LinearLayout)v.findViewById(R.id.intakeLog);
-                                name = AllDietData.get(code).getName();
-                                unit = AllDietData.get(code).getUnit();
                                 flag = true;
                             }
                             else if(type.equals("EXERCISE")){
-                                layout = (LinearLayout)v.findViewById(R.id.burnLog);
-                                name = AllExerciseData.get(code).getName();
+                                if(!AllExerciseData.containsKey(code)){
+                                    name = "WRONG CODE";
+                                }else{
+                                    name = AllExerciseData.get(code).getName();
+                                }
                                 unit = "분";
+                                layout = (LinearLayout)v.findViewById(R.id.burnLog);
                                 flag = false;
                             }
                             makeLogs(layout, name, logid, volume, unit, flag, calorie);
@@ -152,7 +168,7 @@ public class ReceiptFragment extends DialogFragment {
                 }
             }
         };
-        getLogsRequest daylogRequest = new getLogsRequest(userID, getToday(), responseListener);
+        getLogsRequest daylogRequest = new getLogsRequest(userID, date, responseListener);
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         queue.add(daylogRequest);
 
@@ -167,6 +183,7 @@ public class ReceiptFragment extends DialogFragment {
         Date date = new Date(now);
         return getDay(date);
     }
+
     private void makeLogs(LinearLayout linear, String name, String logid, double volume, String unit, boolean type, double calorie){
         LinearLayout covered = new LinearLayout(getContext());
         TextView nameText = new TextView(getContext());
@@ -184,15 +201,16 @@ public class ReceiptFragment extends DialogFragment {
         calorieText.setText(String.format("%.1f", calorie) + " Kcal");
         delete.setImageResource(R.drawable.close);
 
-        layoutParams = new LinearLayout.LayoutParams(250, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.leftMargin = 10;
+        layoutParams = new LinearLayout.LayoutParams(260, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.leftMargin = 0;
         nameText.setLayoutParams(layoutParams);
         nameText.setTextColor(Color.BLACK);
         nameText.setTextSize(17);
+        nameText.setGravity(Gravity.CENTER);
         nameText.setTypeface(Typeface.createFromAsset(getActivity().getAssets(),"bmjua.ttf"));
 
         layoutParams = new LinearLayout.LayoutParams(100, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.leftMargin = 10;
+        layoutParams.leftMargin = 15;
         volumeText.setLayoutParams(layoutParams);
         volumeText.setTextSize(14);
         volumeText.setTypeface(Typeface.createFromAsset(getActivity().getAssets(),"bmjua.ttf"));
@@ -247,7 +265,8 @@ public class ReceiptFragment extends DialogFragment {
         covered.addView(nameText);
         covered.addView(volumeText);
         covered.addView(calorieText);
-        covered.addView(delete);
+        if(canDelete)
+            covered.addView(delete);
 
         linear.addView(covered);
 

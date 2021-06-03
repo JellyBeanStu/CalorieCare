@@ -46,7 +46,6 @@ import java.util.List;
 public class RankingFragment extends Fragment {
 
     private String myID;
-    private int rank;
     private RankListAdapter mAdapter;
     private RecyclerView recyclerView;
     public TextView noRankView;
@@ -261,9 +260,6 @@ public class RankingFragment extends Fragment {
             temp2 = temp1;
         }else{
             for(int i=0;i<temp1.size();i++){
-                if(temp1.get(i).getID().equals(myID))
-                    rank = i;
-
                 age = temp1.get(i).getAge()/10;
                 if(age==0) age=1;
                 if(age == ageChk){
@@ -300,18 +296,21 @@ public class RankingFragment extends Fragment {
                 for (int i=0; i<ThisConditionRank.size(); i++){
                     if (ThisConditionRank.get(i).getID().equals(myID)){
                         myRankLayout.setVisibility(View.VISIBLE);
+
                         myName.setText(users.get(myID).getName());
                         myName.setSingleLine();
 
-                        rank = Integer.toString( i+ 1);
+                        rank = Integer.toString( i+1);
                         myRank.setText(rank);
 
                         if(toggleButton.isChecked())
                             result = String.format("%.1f",ThisConditionRank.get(i).getAll())+ " Kcal";
                         else result = String.format("%.1f",ThisConditionRank.get(i).getBurn())+ " Kcal";
                         myCalorie.setText(result);
-                        ratio = (i+1.0)* 100 / ThisConditionRank.size() ;
+
+                        ratio = (i+1.0)*100 / ThisConditionRank.size() ;
                         myRatio.setText(String.format("%.1f",ratio) + " %");
+
                         return;
                     }
                 }

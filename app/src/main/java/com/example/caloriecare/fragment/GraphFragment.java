@@ -28,9 +28,8 @@ import com.example.caloriecare.MainActivity;
 import com.example.caloriecare.R;
 
 import com.example.caloriecare.graph.DateRangeFragment;
-import com.example.caloriecare.graph.GraphAxisValueFormatter;
-import com.example.caloriecare.graph.LineChartXAxisValueFormatter;
 import com.example.caloriecare.graph.NDSpinner;
+import com.example.caloriecare.main.ReceiptFragment;
 import com.example.caloriecare.ranking.SpinnerAdapter;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -46,7 +45,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,13 +108,22 @@ public class GraphFragment extends Fragment {
         intakeck.setChecked(true);
 
         lineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener(){
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onValueSelected(Entry e, Highlight h)
             {
                 float x=e.getX();
-                float y=e.getY();
+                System.out.println(x);
 
-                Toast.makeText(getActivity(),days.get((int) x)+Float.toString(y),Toast.LENGTH_SHORT).show();
+                ReceiptFragment dialog = ReceiptFragment.newInstance(userID, days.get((int) x), false, new ReceiptFragment.OutputListener() {
+                    @Override
+                    public void onSaveComplete(double burn, double intake) {
+
+                    }
+                });
+                dialog.show(getParentFragmentManager(), "addReceiptDialog");
+
+
             }
 
             @Override
@@ -281,19 +288,20 @@ public class GraphFragment extends Fragment {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     boolean success = jsonObject.getBoolean("success");
+
                     List<Entry> intakeEntry = new ArrayList<>();
                     List<Entry> burnEntry = new ArrayList<>();
                     List<Entry> allEntry = new ArrayList<>();
+
                     if (success) {
                         JSONArray jsonArray = jsonObject.getJSONArray("logs");
-
                         JSONObject temp;
                         String logDate;
                         double intake, burn, all;
-                        long day;
+                        days.clear();
+
                         for(int i=0;i<jsonArray.length();i++){
                             temp = jsonArray.getJSONObject(i);
-
                             logDate = temp.getString("logDate");     // 해당 데이터의 날짜
                             intake = temp.getDouble("intake");       // 당일 칼로리 섭취량
                             burn = temp.getDouble("burn");           // 당일 칼로리 소모량
@@ -304,8 +312,8 @@ public class GraphFragment extends Fragment {
                             intakeEntry.add(new Entry(i, (float) intake));
                             burnEntry.add(new Entry(i, (float) burn));
                             allEntry.add(new Entry(i, (float) all));
-                        }
 
+                        }
                         createLine(allEntry, "총 칼로리",0, R.color.black);
                         createLine(burnEntry, "소모 칼로리",1, R.color.burn);
                         createLine(intakeEntry,"섭취 칼로리",2, R.color.intake);

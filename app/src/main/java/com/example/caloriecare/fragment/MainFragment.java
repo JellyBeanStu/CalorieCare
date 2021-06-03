@@ -15,10 +15,13 @@ import com.example.caloriecare.MainActivity;
 import com.example.caloriecare.R;
 import com.example.caloriecare.User;
 import com.example.caloriecare.main.DietFragment;
+import com.example.caloriecare.main.DietFragment2;
 import com.example.caloriecare.main.ExerciseFragment;
 import com.example.caloriecare.main.ReceiptFragment;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class MainFragment extends Fragment {
@@ -78,6 +81,7 @@ public class MainFragment extends Fragment {
         diet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                System.out.println(getToday());
                 DietFragment dialog = DietFragment.newInstance(myData.getID(), new DietFragment.OutputListener() {
                     @Override
                     public void onSaveComplete(double result) {
@@ -96,7 +100,8 @@ public class MainFragment extends Fragment {
         receipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ReceiptFragment dialog = ReceiptFragment.newInstance(myData.getID(), new ReceiptFragment.OutputListener() {
+                System.out.println(getToday());
+                ReceiptFragment dialog = ReceiptFragment.newInstance(myData.getID(), getToday(), true, new ReceiptFragment.OutputListener() {
                     @Override
                     public void onSaveComplete(double burn, double intake) {
                         myData = ((MainActivity)getActivity()).getMyData();
@@ -156,9 +161,9 @@ public class MainFragment extends Fragment {
         return sdf.format(date);
     }
     private String getToday(){
-        long now = System.currentTimeMillis();
-        Date date = new Date(now);
-        return getDay(date);
+        Calendar cal = Calendar.getInstance();
+        cal.add(cal.DATE,1);
+        return getDay(cal.getTime());
     }
     private double calculateRecommendedCalorie(){
         double recommendedWeight, Recommended;

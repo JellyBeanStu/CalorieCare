@@ -64,6 +64,7 @@ public class ProfileFragment extends Fragment {
     Animation startAnimation;
     Button btn_save;
     boolean blink;
+    boolean isChangeGender, isChangeBirth, isChangeName, isChangeHeight, isChangeWeight;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -85,6 +86,7 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
+        isChangeGender = isChangeBirth = isChangeName = isChangeHeight = isChangeWeight = false;
 
         img_profile = v.findViewById(R.id.profile_user_profile);
         text_name = v.findViewById(R.id.profile_text_name);
@@ -114,11 +116,8 @@ public class ProfileFragment extends Fragment {
         text_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable edit) {
-                if(edit.toString().equals(myData.getName())) {
-                    setBlink(false);
-                }else if(!blink){
-                    setBlink(true);
-                }
+                isChangeName = !edit.toString().equals(myData.getName());
+                setBlink(isChange());
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,
@@ -141,11 +140,8 @@ public class ProfileFragment extends Fragment {
                         birth = date;
                         text_birth.setText(birth);
 
-                        if(birth.equals(myData.getBirth())){
-                            setBlink(false);
-                        }else if(!blink){
-                            setBlink(true);
-                        }
+                        isChangeBirth = !birth.equals(myData.getBirth());
+                        setBlink(isChange());
                     }
                 });
                 dialog.show(getParentFragmentManager(), "addDatePickerDialog");
@@ -163,11 +159,8 @@ public class ProfileFragment extends Fragment {
                 int tempA = (int) Math.round(height*10);
                 int tempB = (int) Math.round(myData.getHeight()*10);
 
-                if(tempA == tempB){
-                    setBlink(false);
-                }else if(!blink){
-                    setBlink(true);
-                }
+                isChangeHeight = (tempA != tempB);
+                setBlink(isChange());
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -189,11 +182,8 @@ public class ProfileFragment extends Fragment {
                 int tempA = (int) Math.round(weight*10);
                 int tempB = (int) Math.round(myData.getWeight()*10);
 
-                if(tempA == tempB){
-                    setBlink(false);
-                }else if(!blink){
-                    setBlink(true);
-                }
+                isChangeWeight = (tempA != tempB);
+                setBlink(isChange());
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,
@@ -207,11 +197,8 @@ public class ProfileFragment extends Fragment {
         tbtn_gender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                if(myData.getGender() == tbtn_gender.isChecked()){
-                    setBlink(false);
-                }else if(!blink){
-                    setBlink(true);
-                }
+                isChangeGender = (myData.getGender() != tbtn_gender.isChecked());
+                setBlink(isChange());
             }
         });
 
@@ -348,12 +335,15 @@ public class ProfileFragment extends Fragment {
         return v;
     }
     public void setBlink(boolean flag){
-        blink = flag;
         btn_save.setClickable(flag);
         if(flag){
             btn_save.startAnimation(startAnimation);
         }else{
             btn_save.clearAnimation();
         }
+    }
+
+    public boolean isChange(){
+        return (isChangeGender|| isChangeBirth|| isChangeName|| isChangeHeight|| isChangeWeight);
     }
 }

@@ -81,7 +81,6 @@ public class MainFragment extends Fragment {
         diet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println(getToday());
                 DietFragment dialog = DietFragment.newInstance(myData.getID(), new DietFragment.OutputListener() {
                     @Override
                     public void onSaveComplete(double result) {
@@ -100,7 +99,6 @@ public class MainFragment extends Fragment {
         receipt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println(getToday());
                 ReceiptFragment dialog = ReceiptFragment.newInstance(myData.getID(), getToday(), true, new ReceiptFragment.OutputListener() {
                     @Override
                     public void onSaveComplete(double burn, double intake) {

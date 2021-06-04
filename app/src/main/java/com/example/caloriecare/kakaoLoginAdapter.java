@@ -10,9 +10,9 @@ import com.kakao.auth.ISessionConfig;
 import com.kakao.auth.KakaoAdapter;
 import com.kakao.auth.KakaoSDK;
 
-public class CalorieCare extends Application
+public class kakaoLoginAdapter extends Application
 {
-    private static volatile CalorieCare instance = null;
+    private static volatile kakaoLoginAdapter instance = null;
 
     private static class KakaoSDKAdapter extends KakaoAdapter
     {
@@ -61,13 +61,13 @@ public class CalorieCare extends Application
             return new IApplicationConfig() {
                 @Override
                 public Context getApplicationContext() {
-                    return CalorieCare.getGlobalApplicationContext();
+                    return kakaoLoginAdapter.getGlobalApplicationContext();
                 }
             };
         }
     }
 
-    public static CalorieCare getGlobalApplicationContext() {
+    public static kakaoLoginAdapter getGlobalApplicationContext() {
         if(instance == null) {
             throw new IllegalStateException("this application does not inherit com.kakao.GlobalApplication");
         }
